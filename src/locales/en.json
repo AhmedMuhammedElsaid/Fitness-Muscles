@@ -1,1 +1,10 @@
-{}
+{
+  "common": {
+    "errorTitle": "Something went wrong",
+    "errorMessage": "An unexpected error occurred. Please try again.",
+    "retry": "Reload"
+  },
+  "mutation": {
+    "failed": "Something went wrong. Please try again."
+  }
+}
