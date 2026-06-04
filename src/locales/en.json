@@ -2,9 +2,138 @@
   "common": {
     "errorTitle": "Something went wrong",
     "errorMessage": "An unexpected error occurred. Please try again.",
-    "retry": "Reload"
+    "retry": "Reload",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "close": "Close",
+    "done": "Done",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "create": "Create",
+    "signOut": "Sign Out",
+    "loading": "Loading..."
   },
   "mutation": {
     "failed": "Something went wrong. Please try again."
+  },
+  "coach": {
+    "tabs": {
+      "home": "Home",
+      "clients": "Clients",
+      "library": "Library",
+      "workouts": "Workouts",
+      "plans": "Plans",
+      "tips": "Tips",
+      "profile": "Profile"
+    },
+    "home": {
+      "welcome": "Welcome back",
+      "clients": "Active Clients",
+      "plans": "Plans",
+      "recentActivity": "Recent Activity",
+      "noActivity": "No workouts logged yet",
+      "workoutLogged": "Workout logged",
+      "effort": "Effort"
+    },
+    "clients": {
+      "title": "Clients",
+      "inviteBtn": "+ Invite",
+      "inviteCode": "Invite Code",
+      "inviteExpiry": "Valid for 7 days, single use",
+      "inviteShareText": "Join my coaching program! Use code: {{code}}",
+      "share": "Share Code",
+      "empty": "No clients yet. Generate an invite code to get started.",
+      "joined": "Joined",
+      "hasPlan": "Has plan",
+      "noPlan": "No plan",
+      "removeTitle": "Remove Client",
+      "removeConfirm": "This will remove the client from your roster. Their history will be preserved.",
+      "remove": "Remove",
+      "detailTitle": "Client Detail",
+      "clientId": "Client ID",
+      "activePlan": "✓ Active plan assigned",
+      "noPlanAssigned": "No plan assigned yet"
+    },
+    "library": {
+      "title": "Exercise Library",
+      "addBtn": "+ Add",
+      "search": "Search exercises...",
+      "empty": "No exercises yet. Tap + Add to create one.",
+      "noResults": "No exercises match your search",
+      "createTitle": "New Exercise",
+      "editTitle": "Edit Exercise",
+      "deleteTitle": "Delete Exercise",
+      "deleteConfirm": "Delete this exercise?",
+      "noVideo": "No video available",
+      "form": {
+        "name": "Name *",
+        "description": "Description",
+        "videoUrl": "YouTube URL",
+        "muscleGroup": "Muscle Group",
+        "equipment": "Equipment"
+      }
+    },
+    "workouts": {
+      "title": "Workouts",
+      "addBtn": "+ New",
+      "empty": "No workouts yet. Tap + New to create one.",
+      "builderTitle": "New Workout",
+      "noExercises": "No exercises",
+      "form": {
+        "name": "Workout Name *",
+        "notes": "Notes",
+        "exercises": "Exercises",
+        "addExercise": "+ Exercise",
+        "noExercises": "No exercises added yet",
+        "selectExercise": "Exercise",
+        "sets": "Sets",
+        "reps": "Reps",
+        "rest": "Rest(s)",
+        "exerciseN": "Exercise"
+      }
+    },
+    "plans": {
+      "title": "Plans",
+      "addBtn": "+ New",
+      "empty": "No plans yet. Tap + New to create one.",
+      "weeks": "weeks",
+      "tapCell": "Tap a cell to set a workout or rest day",
+      "pickWorkout": "Pick a workout or set as rest",
+      "restDay": "— Rest Day —",
+      "clearCell": "Clear",
+      "assign": "Assign",
+      "assignTitle": "Assign Plan",
+      "assignBtn": "Assign",
+      "selectClient": "Select Client",
+      "noClients": "No active clients",
+      "startDate": "Start Date (YYYY-MM-DD)",
+      "replaceTitle": "Replace Active Plan?",
+      "replaceConfirm": "This client has an active plan. Their history will be preserved.",
+      "replace": "Replace",
+      "createTitle": "New Plan",
+      "form": {
+        "name": "Plan Name *",
+        "durationWeeks": "Duration (weeks)",
+        "description": "Description"
+      }
+    },
+    "tips": {
+      "title": "Tips",
+      "placeholder": "Share a tip with your clients...",
+      "post": "Post",
+      "empty": "No tips posted yet. Your clients will see them here."
+    },
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full Name",
+      "tapToChange": "Tap to change",
+      "language": "Language",
+      "signOutTitle": "Sign Out",
+      "signOutConfirm": "Are you sure you want to sign out?",
+      "rtlTitle": "Language Changed",
+      "rtlRestart": "Restart the app to apply the new layout direction."
+    }
   }
 }
