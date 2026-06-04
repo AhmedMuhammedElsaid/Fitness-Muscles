@@ -1,11 +1,11 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
+import { Link } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
-import { PrimaryButton, TextInput } from '@/components/ui';
-import { useAuthStore } from '@/stores/authStore';
-import { firstError } from '@/lib/formError';
 import { useState } from 'react';
+import { PrimaryButton, TextInput } from '@/components/ui';
+import { supabase } from '@/config/supabase';
+import { firstError } from '@/lib/formError';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -13,7 +13,6 @@ const loginSchema = z.object({
 });
 
 export default function LoginScreen() {
-  const login = useAuthStore((s) => s.login);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,11 +23,14 @@ export default function LoginScreen() {
       try {
         setError(null);
         setLoading(true);
-        await login(value.email, value.password);
-        router.replace('/(client)/home');
+        const { error: authError } = await supabase.auth.signInWithPassword({
+          email: value.email,
+          password: value.password,
+        });
+        if (authError) throw authError;
+        // Routing handled by RoleGate in _layout.tsx via onAuthStateChange
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Login failed');
-      } finally {
         setLoading(false);
       }
     },

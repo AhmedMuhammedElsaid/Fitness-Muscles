@@ -1,15 +1,15 @@
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SecondaryButton } from '@/components/ui';
-import { useAuthStore } from '@/stores/authStore';
-import { router } from 'expo-router';
+import { supabase } from '@/config/supabase';
+import { useSessionStore } from '@/stores/sessionStore';
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuthStore();
+  const profile = useSessionStore((s) => s.profile);
 
   const handleLogout = async () => {
-    await logout();
-    router.replace('/auth/login');
+    await supabase.auth.signOut();
+    // RoleGate in _layout.tsx will redirect to /auth/login on SIGNED_OUT
   };
 
   return (
@@ -22,7 +22,7 @@ export default function ProfileScreen() {
             <Text className="text-3xl">👤</Text>
           </View>
           <Text className="text-white font-sans font-medium">
-            {user?.email ?? 'Guest'}
+            {profile?.full_name ?? '—'}
           </Text>
         </View>
 

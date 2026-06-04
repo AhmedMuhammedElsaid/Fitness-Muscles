@@ -1,11 +1,11 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Link, router } from 'expo-router';
+import { Link } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
-import { PrimaryButton, TextInput } from '@/components/ui';
-import { useAuthStore } from '@/stores/authStore';
-import { firstError } from '@/lib/formError';
 import { useState } from 'react';
+import { PrimaryButton, TextInput } from '@/components/ui';
+import { supabase } from '@/config/supabase';
+import { firstError } from '@/lib/formError';
 
 const signupSchema = z
   .object({
@@ -19,7 +19,6 @@ const signupSchema = z
   });
 
 export default function SignupScreen() {
-  const signup = useAuthStore((s) => s.signup);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -30,11 +29,14 @@ export default function SignupScreen() {
       try {
         setError(null);
         setLoading(true);
-        await signup(value.email, value.password);
-        router.replace('/role-select');
+        const { error: authError } = await supabase.auth.signUp({
+          email: value.email,
+          password: value.password,
+        });
+        if (authError) throw authError;
+        // Routing handled by RoleGate in _layout.tsx via onAuthStateChange
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Signup failed');
-      } finally {
         setLoading(false);
       }
     },
