@@ -1,32 +1,30 @@
 import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { supabase } from '@/config/supabase';
+import { firstError } from '@/lib/formError';
 import { useState } from 'react';
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email'),
 });
 
-type ForgotForm = z.infer<typeof schema>;
-
 export default function ForgotPasswordScreen() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<ForgotForm>({
-    resolver: zodResolver(schema),
+  const form = useForm({
+    defaultValues: { email: '' },
+    validators: { onChange: schema },
+    onSubmit: async ({ value }) => {
+      setLoading(true);
+      await supabase.auth.resetPasswordForEmail(value.email);
+      setSent(true);
+      setLoading(false);
+    },
   });
-
-  const onSubmit = async (data: ForgotForm) => {
-    setLoading(true);
-    await supabase.auth.resetPasswordForEmail(data.email);
-    setSent(true);
-    setLoading(false);
-  };
 
   if (sent) {
     return (
@@ -49,23 +47,21 @@ export default function ForgotPasswordScreen() {
       <Text className="text-text-secondary text-center text-sm mb-8">
         Enter your email and we'll send you a reset link.
       </Text>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, onBlur, value } }) => (
+      <form.Field name="email">
+        {(field) => (
           <TextInput
             placeholder="your@email.com"
             keyboardType="email-address"
             autoCapitalize="none"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            error={errors.email?.message}
+            value={field.state.value}
+            onChangeText={field.handleChange}
+            onBlur={field.handleBlur}
+            error={firstError(field.state.meta.errors)}
           />
         )}
-      />
+      </form.Field>
       <View className="mt-6 w-full">
-        <PrimaryButton title="Send Reset Link" loading={loading} onPress={handleSubmit(onSubmit)} />
+        <PrimaryButton title="Send Reset Link" loading={loading} onPress={() => form.handleSubmit()} />
       </View>
     </KeyboardAvoidingView>
   );

@@ -1,6 +1,6 @@
-# Stride Fitness App
+# Fitness & Muscles
 
-Open-source fitness coaching mobile app built with React Native (Expo), NativeWind, and Supabase.
+Single-coach fitness coaching mobile app built with React Native (Expo), NativeWind, and Supabase.
 
 ## Tech Stack
 
@@ -8,11 +8,11 @@ Open-source fitness coaching mobile app built with React Native (Expo), NativeWi
 |------------------|-------------------------|
 | Framework        | React Native + Expo 55  |
 | Navigation       | Expo Router (file-based)|
-| State Management | Zustand                 |
+| Client State     | TanStack Store          |
 | Server State     | TanStack Query          |
-| HTTP Client      | Axios                   |
+| Reactive data    | TanStack DB             |
 | Auth             | Supabase Auth           |
-| Forms            | React Hook Form + Zod   |
+| Forms            | TanStack Form + Zod     |
 | Animations       | React Native Reanimated |
 | Styling          | NativeWind (Tailwind)   |
 
@@ -57,7 +57,7 @@ app/                    # Expo Router screens
 src/
 ├── components/ui/      # Design system components
 ├── config/             # API, Supabase, QueryClient
-├── stores/             # Zustand stores
+├── stores/             # TanStack Store client state
 └── theme/              # Design tokens
 ```
 

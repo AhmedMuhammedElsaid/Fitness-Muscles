@@ -1,32 +1,33 @@
 import { View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from '@tanstack/react-form';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useEffect } from 'react';
 
 export default function BodyMetricsStep() {
   const { formData, updateFormData, setStep } = useOnboardingStore();
-  useEffect(() => { setStep(3); }, [setStep]);
+  useEffect(() => {
+    setStep(3);
+  }, [setStep]);
 
-  const { control, handleSubmit } = useForm({
+  const form = useForm({
     defaultValues: {
       currentWeight: formData.currentWeight?.toString() || '',
       targetWeight: formData.targetWeight?.toString() || '',
       heightFt: formData.heightFt?.toString() || '',
       heightIn: formData.heightIn?.toString() || '',
     },
+    onSubmit: ({ value }) => {
+      updateFormData({
+        currentWeight: value.currentWeight ? parseFloat(value.currentWeight) : undefined,
+        targetWeight: value.targetWeight ? parseFloat(value.targetWeight) : undefined,
+        heightFt: value.heightFt ? parseInt(value.heightFt, 10) : undefined,
+        heightIn: value.heightIn ? parseInt(value.heightIn, 10) : undefined,
+      });
+      router.push('/onboarding-form/health-restrictions');
+    },
   });
-
-  const onNext = (data: Record<string, string>) => {
-    updateFormData({
-      currentWeight: data.currentWeight ? parseFloat(data.currentWeight) : undefined,
-      targetWeight: data.targetWeight ? parseFloat(data.targetWeight) : undefined,
-      heightFt: data.heightFt ? parseInt(data.heightFt) : undefined,
-      heightIn: data.heightIn ? parseInt(data.heightIn) : undefined,
-    });
-    router.push('/onboarding-form/health-restrictions');
-  };
 
   return (
     <ScrollView className="flex-1" contentContainerClassName="px-7 pb-8" keyboardShouldPersistTaps="handled">
@@ -36,25 +37,33 @@ export default function BodyMetricsStep() {
       <View className="gap-4">
         <View className="flex-row gap-4">
           <View className="flex-1">
-            <Controller control={control} name="heightFt" render={({ field: { onChange, value } }) => (
-              <TextInput label="Height (ft)" placeholder="5" keyboardType="numeric" onChangeText={onChange} value={value} />
-            )} />
+            <form.Field name="heightFt">
+              {(field) => (
+                <TextInput label="Height (ft)" placeholder="5" keyboardType="numeric" onChangeText={field.handleChange} value={field.state.value} />
+              )}
+            </form.Field>
           </View>
           <View className="flex-1">
-            <Controller control={control} name="heightIn" render={({ field: { onChange, value } }) => (
-              <TextInput label="Height (in)" placeholder="10" keyboardType="numeric" onChangeText={onChange} value={value} />
-            )} />
+            <form.Field name="heightIn">
+              {(field) => (
+                <TextInput label="Height (in)" placeholder="10" keyboardType="numeric" onChangeText={field.handleChange} value={field.state.value} />
+              )}
+            </form.Field>
           </View>
         </View>
-        <Controller control={control} name="currentWeight" render={({ field: { onChange, value } }) => (
-          <TextInput label="Current Weight (lbs)" placeholder="160" keyboardType="numeric" onChangeText={onChange} value={value} />
-        )} />
-        <Controller control={control} name="targetWeight" render={({ field: { onChange, value } }) => (
-          <TextInput label="Target Weight (lbs)" placeholder="150" keyboardType="numeric" onChangeText={onChange} value={value} />
-        )} />
+        <form.Field name="currentWeight">
+          {(field) => (
+            <TextInput label="Current Weight (lbs)" placeholder="160" keyboardType="numeric" onChangeText={field.handleChange} value={field.state.value} />
+          )}
+        </form.Field>
+        <form.Field name="targetWeight">
+          {(field) => (
+            <TextInput label="Target Weight (lbs)" placeholder="150" keyboardType="numeric" onChangeText={field.handleChange} value={field.state.value} />
+          )}
+        </form.Field>
       </View>
 
-      <PrimaryButton title="Continue" onPress={handleSubmit(onNext)} className="mt-8" />
+      <PrimaryButton title="Continue" onPress={() => form.handleSubmit()} className="mt-8" />
     </ScrollView>
   );
 }

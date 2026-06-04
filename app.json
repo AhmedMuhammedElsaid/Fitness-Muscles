@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "Stride Fitness",
-    "slug": "stride-fitness-app",
+    "name": "Fitness & Muscles",
+    "slug": "fitness-and-muscles",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "scheme": "stride-fitness",
+    "scheme": "fitnessandmuscles",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.stridefitness.app"
+      "bundleIdentifier": "com.fitnessandmuscles.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow Fitness & Muscles to access your photos so you can set a profile picture."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +27,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.stridefitness.app"
+      "package": "com.fitnessandmuscles.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -33,7 +37,10 @@
       "expo-router",
       "expo-image",
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      "expo-localization",
+      "expo-sharing",
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true

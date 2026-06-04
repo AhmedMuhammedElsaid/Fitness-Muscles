@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { Store, useStore } from '@tanstack/react-store';
 
 interface OnboardingFormData {
   role?: 'client' | 'coach';
@@ -36,11 +36,19 @@ interface OnboardingState {
   reset: () => void;
 }
 
-export const useOnboardingStore = create<OnboardingState>((set) => ({
+export const onboardingStore = new Store<OnboardingState>({
   currentStep: 1,
   formData: {},
-  setStep: (step) => set({ currentStep: step }),
+  setStep: (step) => onboardingStore.setState((s) => ({ ...s, currentStep: step })),
   updateFormData: (data) =>
-    set((state) => ({ formData: { ...state.formData, ...data } })),
-  reset: () => set({ currentStep: 1, formData: {} }),
-}));
+    onboardingStore.setState((s) => ({ ...s, formData: { ...s.formData, ...data } })),
+  reset: () => onboardingStore.setState((s) => ({ ...s, currentStep: 1, formData: {} })),
+});
+
+export function useOnboardingStore(): OnboardingState;
+export function useOnboardingStore<T>(selector: (state: OnboardingState) => T): T;
+export function useOnboardingStore<T>(selector?: (state: OnboardingState) => T) {
+  return useStore(onboardingStore, selector as ((state: OnboardingState) => T) | undefined);
+}
+
+export type { OnboardingFormData };

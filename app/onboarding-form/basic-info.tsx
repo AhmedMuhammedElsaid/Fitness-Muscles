@@ -1,29 +1,28 @@
 import { View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { useOnboardingStore } from '@/stores/onboardingStore';
+import { firstError } from '@/lib/formError';
 import { useEffect } from 'react';
 
 const schema = z.object({
   fullName: z.string().min(2, 'Name is required'),
   dateOfBirth: z.string().min(1, 'Date of birth is required'),
   gender: z.string().min(1, 'Gender is required'),
-  city: z.string().optional(),
-  country: z.string().optional(),
+  city: z.string(),
+  country: z.string(),
 });
-
-type BasicInfoForm = z.infer<typeof schema>;
 
 export default function BasicInfoStep() {
   const { formData, updateFormData, setStep } = useOnboardingStore();
 
-  useEffect(() => { setStep(1); }, [setStep]);
+  useEffect(() => {
+    setStep(1);
+  }, [setStep]);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<BasicInfoForm>({
-    resolver: zodResolver(schema),
+  const form = useForm({
     defaultValues: {
       fullName: formData.fullName || '',
       dateOfBirth: formData.dateOfBirth || '',
@@ -31,12 +30,12 @@ export default function BasicInfoStep() {
       city: formData.city || '',
       country: formData.country || '',
     },
+    validators: { onChange: schema },
+    onSubmit: ({ value }) => {
+      updateFormData(value);
+      router.push('/onboarding-form/fitness-goals');
+    },
   });
-
-  const onNext = (data: BasicInfoForm) => {
-    updateFormData(data);
-    router.push('/onboarding-form/fitness-goals');
-  };
 
   return (
     <ScrollView
@@ -52,77 +51,67 @@ export default function BasicInfoStep() {
       </Text>
 
       <View className="gap-4">
-        <Controller
-          control={control}
-          name="fullName"
-          render={({ field: { onChange, onBlur, value } }) => (
+        <form.Field name="fullName">
+          {(field) => (
             <TextInput
               label="Full Name"
               placeholder="John Doe"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.fullName?.message}
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onBlur={field.handleBlur}
+              error={firstError(field.state.meta.errors)}
             />
           )}
-        />
-        <Controller
-          control={control}
-          name="dateOfBirth"
-          render={({ field: { onChange, onBlur, value } }) => (
+        </form.Field>
+        <form.Field name="dateOfBirth">
+          {(field) => (
             <TextInput
               label="Date of Birth"
               placeholder="YYYY-MM-DD"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.dateOfBirth?.message}
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onBlur={field.handleBlur}
+              error={firstError(field.state.meta.errors)}
             />
           )}
-        />
-        <Controller
-          control={control}
-          name="gender"
-          render={({ field: { onChange, onBlur, value } }) => (
+        </form.Field>
+        <form.Field name="gender">
+          {(field) => (
             <TextInput
               label="Gender"
               placeholder="Male / Female / Other"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              error={errors.gender?.message}
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onBlur={field.handleBlur}
+              error={firstError(field.state.meta.errors)}
             />
           )}
-        />
-        <Controller
-          control={control}
-          name="city"
-          render={({ field: { onChange, onBlur, value } }) => (
+        </form.Field>
+        <form.Field name="city">
+          {(field) => (
             <TextInput
               label="City (optional)"
               placeholder="New York"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onBlur={field.handleBlur}
             />
           )}
-        />
-        <Controller
-          control={control}
-          name="country"
-          render={({ field: { onChange, onBlur, value } }) => (
+        </form.Field>
+        <form.Field name="country">
+          {(field) => (
             <TextInput
               label="Country (optional)"
               placeholder="United States"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onBlur={field.handleBlur}
             />
           )}
-        />
+        </form.Field>
       </View>
 
-      <PrimaryButton title="Continue" onPress={handleSubmit(onNext)} className="mt-8" />
+      <PrimaryButton title="Continue" onPress={() => form.handleSubmit()} className="mt-8" />
     </ScrollView>
   );
 }

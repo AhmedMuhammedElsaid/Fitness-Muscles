@@ -1,10 +1,10 @@
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Link, router } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
+import { firstError } from '@/lib/formError';
 import { useState } from 'react';
 
 const signupSchema = z
@@ -18,29 +18,27 @@ const signupSchema = z
     path: ['confirmPassword'],
   });
 
-type SignupForm = z.infer<typeof signupSchema>;
-
 export default function SignupScreen() {
   const signup = useAuthStore((s) => s.signup);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<SignupForm>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm({
+    defaultValues: { email: '', password: '', confirmPassword: '' },
+    validators: { onChange: signupSchema },
+    onSubmit: async ({ value }) => {
+      try {
+        setError(null);
+        setLoading(true);
+        await signup(value.email, value.password);
+        router.replace('/role-select');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Signup failed');
+      } finally {
+        setLoading(false);
+      }
+    },
   });
-
-  const onSubmit = async (data: SignupForm) => {
-    try {
-      setError(null);
-      setLoading(true);
-      await signup(data.email, data.password);
-      router.replace('/role-select');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signup failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <KeyboardAvoidingView
@@ -53,7 +51,7 @@ export default function SignupScreen() {
       >
         <View className="flex-1 px-7 justify-center">
           <Text className="text-primary font-serif text-4xl italic text-center mb-2">
-            Stride
+            Fitness &amp; Muscles
           </Text>
           <Text className="text-text-secondary text-center text-sm mb-10">
             Create your account
@@ -66,55 +64,49 @@ export default function SignupScreen() {
           )}
 
           <View className="gap-4 mb-6">
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
+            <form.Field name="email">
+              {(field) => (
                 <TextInput
                   label="Email"
                   placeholder="your@email.com"
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  error={errors.email?.message}
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  error={firstError(field.state.meta.errors)}
                 />
               )}
-            />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
+            </form.Field>
+            <form.Field name="password">
+              {(field) => (
                 <TextInput
                   label="Password"
                   placeholder="At least 8 characters"
                   secureTextEntry
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  error={errors.password?.message}
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  error={firstError(field.state.meta.errors)}
                 />
               )}
-            />
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, onBlur, value } }) => (
+            </form.Field>
+            <form.Field name="confirmPassword">
+              {(field) => (
                 <TextInput
                   label="Confirm Password"
                   placeholder="Re-enter your password"
                   secureTextEntry
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  error={errors.confirmPassword?.message}
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  error={firstError(field.state.meta.errors)}
                 />
               )}
-            />
+            </form.Field>
           </View>
 
-          <PrimaryButton title="Create Account" loading={loading} onPress={handleSubmit(onSubmit)} />
+          <PrimaryButton title="Create Account" loading={loading} onPress={() => form.handleSubmit()} />
 
           <View className="flex-row justify-center mt-6">
             <Text className="text-text-secondary text-sm">Already have an account? </Text>

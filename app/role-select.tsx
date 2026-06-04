@@ -14,7 +14,7 @@ export default function RoleSelectScreen() {
   return (
     <View className="flex-1 bg-background items-center justify-center px-7">
       <Text className="text-primary font-serif text-3xl italic text-center mb-2">
-        How will you use Stride?
+        How will you use Fitness &amp; Muscles?
       </Text>
       <Text className="text-text-secondary text-center text-sm mb-12">
         Choose your role to personalize your experience

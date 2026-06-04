@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { Store, useStore } from '@tanstack/react-store';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/config/supabase';
 
@@ -15,7 +15,7 @@ interface AuthState {
   logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const authStore = new Store<AuthState>({
   user: null,
   session: null,
   isAuthenticated: false,
@@ -23,12 +23,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   userRole: null,
 
   setSession: (session) =>
-    set({
+    authStore.setState((s) => ({
+      ...s,
       session,
       user: session?.user ?? null,
       isAuthenticated: !!session,
       isLoading: false,
-    }),
+    })),
 
   login: async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -47,6 +48,18 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     await supabase.auth.signOut();
-    set({ user: null, session: null, isAuthenticated: false, userRole: null });
+    authStore.setState((s) => ({
+      ...s,
+      user: null,
+      session: null,
+      isAuthenticated: false,
+      userRole: null,
+    }));
   },
-}));
+});
+
+export function useAuthStore(): AuthState;
+export function useAuthStore<T>(selector: (state: AuthState) => T): T;
+export function useAuthStore<T>(selector?: (state: AuthState) => T) {
+  return useStore(authStore, selector as ((state: AuthState) => T) | undefined);
+}

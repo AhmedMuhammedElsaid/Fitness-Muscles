@@ -1,4 +1,4 @@
-# Contributing to Stride Fitness App
+# Contributing to Fitness & Muscles
 
 Thank you for your interest in contributing!
 
