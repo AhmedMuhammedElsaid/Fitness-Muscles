@@ -1,34 +1,69 @@
-import { Text, ScrollView } from 'react-native';
+import { Text, ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 import { PrimaryButton, ChipSelector } from '@/components/ui';
-import { useOnboardingStore } from '@/stores/onboardingStore';
-import { useEffect, useState } from 'react';
+import { patchDraft, setOnboardingStep, useOnboardingStore } from '@/stores/onboardingStore';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const TIMES = ['Morning', 'Afternoon', 'Evening'];
 
 export default function WorkoutPreferencesStep() {
-  const { formData, updateFormData, setStep } = useOnboardingStore();
-  useEffect(() => { setStep(5); }, [setStep]);
+  const { t } = useTranslation();
+  const saved = useOnboardingStore((s) => s.draft.workoutPrefs);
 
-  const [days, setDays] = useState<string[]>(formData.preferredDays || []);
+  setOnboardingStep(7);
 
-  const toggleDay = (value: string) =>
-    setDays((prev) => prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]);
+  const [days, setDays] = useState<string[]>(saved?.preferredDays ?? []);
+  const [time, setTime] = useState<string[]>(
+    saved?.preferredTimeOfDay ? [saved.preferredTimeOfDay] : [],
+  );
 
   const onNext = () => {
-    updateFormData({ preferredDays: days });
-    router.push('/onboarding-form/nutrition');
+    patchDraft({ workoutPrefs: { preferredDays: days, preferredTimeOfDay: time[0] } });
+    router.push('/onboarding-form/request-sent');
   };
 
   return (
     <ScrollView className="flex-1" contentContainerClassName="px-7 pb-8">
-      <Text className="text-white font-sans text-xl font-semibold mb-1 mt-6">Workout Preferences</Text>
-      <Text className="text-text-secondary text-sm mb-8">When do you prefer to work out?</Text>
+      <Text className="text-white font-sans text-xl font-semibold mb-1 mt-6">
+        {t('onboarding.workoutPrefs.title')}
+      </Text>
+      <Text className="text-text-secondary text-sm mb-8">
+        {t('onboarding.workoutPrefs.subtitle')}
+      </Text>
 
-      <Text className="text-white text-sm font-sans font-medium mb-3">Preferred Days</Text>
-      <ChipSelector options={DAYS} selected={days} onToggle={toggleDay} />
+      <Text className="text-white text-sm font-sans font-medium mb-3">
+        {t('onboarding.workoutPrefs.preferredDays')}
+      </Text>
+      <ChipSelector
+        options={DAYS}
+        selected={days}
+        onToggle={(v) =>
+          setDays((prev) =>
+            prev.includes(v) ? prev.filter((d) => d !== v) : [...prev, v],
+          )
+        }
+        className="mb-6"
+      />
 
-      <PrimaryButton title="Continue" disabled={!days.length} onPress={onNext} className="mt-8" />
+      <Text className="text-white text-sm font-sans font-medium mb-3">
+        {t('onboarding.nutrition.timeOfDay')}
+      </Text>
+      <View className="mb-2">
+        <ChipSelector
+          options={TIMES}
+          selected={time}
+          onToggle={(v) => setTime([v])}
+        />
+      </View>
+
+      <PrimaryButton
+        title={t('onboarding.continue')}
+        disabled={!days.length}
+        onPress={onNext}
+        className="mt-8"
+      />
     </ScrollView>
   );
 }

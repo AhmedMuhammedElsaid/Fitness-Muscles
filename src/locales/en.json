@@ -136,6 +136,77 @@
       "rtlRestart": "Restart the app to apply the new layout direction."
     }
   },
+  "onboarding": {
+    "step": "Step",
+    "of": "of",
+    "continue": "Continue",
+    "trainerCode": {
+      "title": "Enter Trainer Code",
+      "subtitle": "Your trainer will give you a unique code to join their program.",
+      "label": "Trainer Code",
+      "placeholder": "ST-XXXXX",
+      "submit": "Join Program",
+      "invalidCode": "Invalid or expired code. Please check and try again.",
+      "alreadyUsed": "This code has already been used.",
+      "unknownError": "Something went wrong. Please try again."
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "subtitle": "Tell us a bit about yourself",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "dateOfBirth": "Date of Birth",
+      "dateOfBirthPlaceholder": "YYYY-MM-DD",
+      "gender": "Gender",
+      "genderPlaceholder": "Male / Female / Other",
+      "city": "City (optional)",
+      "cityPlaceholder": "Cairo",
+      "country": "Country (optional)",
+      "countryPlaceholder": "Egypt"
+    },
+    "bodyMetrics": {
+      "title": "Body Metrics",
+      "subtitle": "Help us understand your starting point",
+      "heightCm": "Height (cm)",
+      "weightKg": "Current Weight (kg)",
+      "targetWeightKg": "Target Weight (kg)"
+    },
+    "fitnessGoals": {
+      "title": "Fitness Goals",
+      "subtitle": "What do you want to achieve?",
+      "primaryGoal": "Primary Goal",
+      "workoutTypes": "Workout Types"
+    },
+    "healthRestrictions": {
+      "title": "Health & Restrictions",
+      "subtitle": "Any health considerations?",
+      "medicalConditions": "Do you have medical conditions?",
+      "medicalDetails": "Please describe",
+      "injuries": "Do you have any injuries?",
+      "injuryDetails": "Please describe",
+      "foodAllergies": "Do you have food allergies?",
+      "allergyDetails": "Please list them"
+    },
+    "nutrition": {
+      "title": "Nutrition",
+      "subtitle": "Do you follow a specific diet?",
+      "dietaryPreference": "Dietary Preference",
+      "timeOfDay": "Preferred workout time"
+    },
+    "workoutPrefs": {
+      "title": "Workout Preferences",
+      "subtitle": "When do you prefer to train?",
+      "preferredDays": "Preferred Days",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening"
+    },
+    "requestSent": {
+      "title": "You're all set!",
+      "subtitle": "Your profile has been submitted. Your trainer will review and assign your plan shortly.",
+      "cta": "Go to Dashboard"
+    }
+  },
   "client": {
     "tabs": {
       "home": "Home",

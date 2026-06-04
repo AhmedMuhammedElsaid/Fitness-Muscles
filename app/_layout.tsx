@@ -13,6 +13,7 @@ import { queryClient } from '@/config/queryClient';
 import { useSessionStore } from '@/stores/sessionStore';
 import { SessionProvider } from '@/providers/SessionProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { hydrateOnboardingStore } from '@/stores/onboardingStore';
 
 const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
 if (sentryDsn) {
@@ -68,6 +69,10 @@ function RoleGate() {
 }
 
 function RootLayout() {
+  useEffect(() => {
+    void hydrateOnboardingStore();
+  }, []);
+
   return (
     <ErrorBoundary>
       <I18nextProvider i18n={i18n}>

@@ -1,49 +1,79 @@
 import { Store, useStore } from '@tanstack/react-store';
+import * as SecureStore from 'expo-secure-store';
+import type {
+  BasicInfoData,
+  BodyMetricsData,
+  FitnessGoalsData,
+  HealthRestrictionsData,
+  NutritionData,
+  WorkoutPrefsData,
+} from '@/db/intake-schemas';
 
-interface OnboardingFormData {
-  role?: 'client' | 'coach';
-  fullName?: string;
-  dateOfBirth?: string;
-  gender?: string;
-  city?: string;
-  country?: string;
-  primaryGoal?: string;
-  workoutTypes?: string[];
-  currentWeight?: number;
-  targetWeight?: number;
-  heightFt?: number;
-  heightIn?: number;
-  activityLevel?: string;
-  hasMedicalConditions?: boolean;
-  medicalConditions?: string;
-  hasInjuries?: boolean;
-  injuries?: string;
-  hasFoodAllergies?: boolean;
-  foodAllergies?: string;
-  preferredDays?: string[];
-  preferredTimeFrom?: string;
-  preferredTimeTo?: string;
-  dietaryPreference?: string;
-  hasTrainer?: boolean;
-  trainerCode?: string;
+const STORAGE_KEY = 'onboarding_draft';
+
+export interface OnboardingDraft {
+  trainerCodeRedeemed: boolean;
+  basicInfo?: BasicInfoData;
+  bodyMetrics?: BodyMetricsData;
+  fitnessGoals?: FitnessGoalsData;
+  healthRestrictions?: HealthRestrictionsData;
+  nutritionPrefs?: NutritionData;
+  workoutPrefs?: WorkoutPrefsData;
 }
 
 interface OnboardingState {
   currentStep: number;
-  formData: OnboardingFormData;
-  setStep: (step: number) => void;
-  updateFormData: (data: Partial<OnboardingFormData>) => void;
-  reset: () => void;
+  draft: OnboardingDraft;
 }
+
+const EMPTY_DRAFT: OnboardingDraft = { trainerCodeRedeemed: false };
 
 export const onboardingStore = new Store<OnboardingState>({
   currentStep: 1,
-  formData: {},
-  setStep: (step) => onboardingStore.setState((s) => ({ ...s, currentStep: step })),
-  updateFormData: (data) =>
-    onboardingStore.setState((s) => ({ ...s, formData: { ...s.formData, ...data } })),
-  reset: () => onboardingStore.setState((s) => ({ ...s, currentStep: 1, formData: {} })),
+  draft: EMPTY_DRAFT,
 });
+
+/** Load persisted draft from SecureStore (call once on app/layout mount). */
+export async function hydrateOnboardingStore(): Promise<void> {
+  try {
+    const raw = await SecureStore.getItemAsync(STORAGE_KEY);
+    if (raw) {
+      const draft = JSON.parse(raw) as OnboardingDraft;
+      onboardingStore.setState((s) => ({ ...s, draft }));
+    }
+  } catch {
+    // Corrupt data — start fresh
+  }
+}
+
+async function persistDraft(draft: OnboardingDraft): Promise<void> {
+  try {
+    await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(draft));
+  } catch {
+    // Non-fatal: in-memory draft still works
+  }
+}
+
+export function setOnboardingStep(step: number): void {
+  onboardingStore.setState((s) => ({ ...s, currentStep: step }));
+}
+
+export function patchDraft(patch: Partial<OnboardingDraft>): void {
+  onboardingStore.setState((s) => {
+    const next = { ...s.draft, ...patch };
+    void persistDraft(next);
+    return { ...s, draft: next };
+  });
+}
+
+export async function clearOnboardingDraft(): Promise<void> {
+  onboardingStore.setState((s) => ({ ...s, currentStep: 1, draft: EMPTY_DRAFT }));
+  try {
+    await SecureStore.deleteItemAsync(STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
 
 export function useOnboardingStore(): OnboardingState;
 export function useOnboardingStore<T>(selector: (state: OnboardingState) => T): T;
@@ -51,4 +81,3 @@ export function useOnboardingStore<T>(selector?: (state: OnboardingState) => T) 
   return useStore(onboardingStore, selector as ((state: OnboardingState) => T) | undefined);
 }
 
-export type { OnboardingFormData };

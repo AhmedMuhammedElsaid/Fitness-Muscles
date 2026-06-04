@@ -1,39 +1,30 @@
 import { View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
-import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton, TextInput } from '@/components/ui';
-import { useOnboardingStore } from '@/stores/onboardingStore';
+import { basicInfoSchema } from '@/db/intake-schemas';
+import { patchDraft, setOnboardingStep, useOnboardingStore } from '@/stores/onboardingStore';
 import { firstError } from '@/lib/formError';
-import { useEffect } from 'react';
-
-const schema = z.object({
-  fullName: z.string().min(2, 'Name is required'),
-  dateOfBirth: z.string().min(1, 'Date of birth is required'),
-  gender: z.string().min(1, 'Gender is required'),
-  city: z.string(),
-  country: z.string(),
-});
 
 export default function BasicInfoStep() {
-  const { formData, updateFormData, setStep } = useOnboardingStore();
+  const { t } = useTranslation();
+  const saved = useOnboardingStore((s) => s.draft.basicInfo);
 
-  useEffect(() => {
-    setStep(1);
-  }, [setStep]);
+  setOnboardingStep(2);
 
   const form = useForm({
     defaultValues: {
-      fullName: formData.fullName || '',
-      dateOfBirth: formData.dateOfBirth || '',
-      gender: formData.gender || '',
-      city: formData.city || '',
-      country: formData.country || '',
+      fullName: saved?.fullName ?? '',
+      dateOfBirth: saved?.dateOfBirth ?? '',
+      gender: saved?.gender ?? '',
+      city: saved?.city ?? '',
+      country: saved?.country ?? '',
     },
-    validators: { onChange: schema },
+    validators: { onChange: basicInfoSchema },
     onSubmit: ({ value }) => {
-      updateFormData(value);
-      router.push('/onboarding-form/fitness-goals');
+      patchDraft({ basicInfo: value });
+      router.push('/onboarding-form/body-metrics');
     },
   });
 
@@ -44,74 +35,78 @@ export default function BasicInfoStep() {
       keyboardShouldPersistTaps="handled"
     >
       <Text className="text-white font-sans text-xl font-semibold mb-1 mt-6">
-        Basic Information
+        {t('onboarding.basicInfo.title')}
       </Text>
       <Text className="text-text-secondary text-sm mb-8">
-        Tell us a bit about yourself
+        {t('onboarding.basicInfo.subtitle')}
       </Text>
 
       <View className="gap-4">
         <form.Field name="fullName">
-          {(field) => (
+          {(f) => (
             <TextInput
-              label="Full Name"
-              placeholder="John Doe"
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              onBlur={field.handleBlur}
-              error={firstError(field.state.meta.errors)}
+              label={t('onboarding.basicInfo.fullName')}
+              placeholder={t('onboarding.basicInfo.fullNamePlaceholder')}
+              value={f.state.value}
+              onChangeText={f.handleChange}
+              onBlur={f.handleBlur}
+              error={firstError(f.state.meta.errors)}
             />
           )}
         </form.Field>
         <form.Field name="dateOfBirth">
-          {(field) => (
+          {(f) => (
             <TextInput
-              label="Date of Birth"
-              placeholder="YYYY-MM-DD"
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              onBlur={field.handleBlur}
-              error={firstError(field.state.meta.errors)}
+              label={t('onboarding.basicInfo.dateOfBirth')}
+              placeholder={t('onboarding.basicInfo.dateOfBirthPlaceholder')}
+              value={f.state.value}
+              onChangeText={f.handleChange}
+              onBlur={f.handleBlur}
+              error={firstError(f.state.meta.errors)}
             />
           )}
         </form.Field>
         <form.Field name="gender">
-          {(field) => (
+          {(f) => (
             <TextInput
-              label="Gender"
-              placeholder="Male / Female / Other"
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              onBlur={field.handleBlur}
-              error={firstError(field.state.meta.errors)}
+              label={t('onboarding.basicInfo.gender')}
+              placeholder={t('onboarding.basicInfo.genderPlaceholder')}
+              value={f.state.value}
+              onChangeText={f.handleChange}
+              onBlur={f.handleBlur}
+              error={firstError(f.state.meta.errors)}
             />
           )}
         </form.Field>
         <form.Field name="city">
-          {(field) => (
+          {(f) => (
             <TextInput
-              label="City (optional)"
-              placeholder="New York"
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              onBlur={field.handleBlur}
+              label={t('onboarding.basicInfo.city')}
+              placeholder={t('onboarding.basicInfo.cityPlaceholder')}
+              value={f.state.value}
+              onChangeText={f.handleChange}
+              onBlur={f.handleBlur}
             />
           )}
         </form.Field>
         <form.Field name="country">
-          {(field) => (
+          {(f) => (
             <TextInput
-              label="Country (optional)"
-              placeholder="United States"
-              value={field.state.value}
-              onChangeText={field.handleChange}
-              onBlur={field.handleBlur}
+              label={t('onboarding.basicInfo.country')}
+              placeholder={t('onboarding.basicInfo.countryPlaceholder')}
+              value={f.state.value}
+              onChangeText={f.handleChange}
+              onBlur={f.handleBlur}
             />
           )}
         </form.Field>
       </View>
 
-      <PrimaryButton title="Continue" onPress={() => form.handleSubmit()} className="mt-8" />
+      <PrimaryButton
+        title={t('onboarding.continue')}
+        onPress={() => form.handleSubmit()}
+        className="mt-8"
+      />
     </ScrollView>
   );
 }

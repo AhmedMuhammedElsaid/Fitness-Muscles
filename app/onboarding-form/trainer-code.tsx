@@ -1,48 +1,92 @@
+import { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { PrimaryButton, SecondaryButton, TextInput, ToggleOption } from '@/components/ui';
-import { useOnboardingStore } from '@/stores/onboardingStore';
-import { useEffect, useState } from 'react';
+import { useForm } from '@tanstack/react-form';
+import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { PrimaryButton, TextInput } from '@/components/ui';
+import { redeemInvite } from '@/db/mutations';
+import { patchDraft, setOnboardingStep } from '@/stores/onboardingStore';
+import { firstError } from '@/lib/formError';
+
+const schema = z.object({
+  code: z.string().min(1, 'Code is required'),
+});
 
 export default function TrainerCodeStep() {
-  const { formData, updateFormData, setStep } = useOnboardingStore();
-  useEffect(() => { setStep(7); }, [setStep]);
+  const { t } = useTranslation();
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const [hasTrainer, setHasTrainer] = useState(formData.hasTrainer ?? false);
-  const [code, setCode] = useState(formData.trainerCode || '');
+  setOnboardingStep(1);
 
-  const onNext = () => {
-    updateFormData({ hasTrainer, trainerCode: hasTrainer ? code : undefined });
-    if (hasTrainer && code) {
-      router.push('/onboarding-form/request-sent');
-    } else {
-      router.push('/onboarding-form/choose-trainer');
-    }
-  };
+  const form = useForm({
+    defaultValues: { code: '' },
+    validators: { onChange: schema },
+    onSubmit: async ({ value }) => {
+      setApiError(null);
+      setLoading(true);
+      try {
+        await redeemInvite(value.code.trim().toUpperCase());
+        patchDraft({ trainerCodeRedeemed: true });
+        router.push('/onboarding-form/basic-info');
+      } catch (err: unknown) {
+        const pgCode = (err as { code?: string })?.code;
+        if (pgCode === '23505') {
+          setApiError(t('onboarding.trainerCode.alreadyUsed'));
+        } else if (pgCode === '22023') {
+          setApiError(t('onboarding.trainerCode.invalidCode'));
+        } else {
+          setApiError(t('onboarding.trainerCode.unknownError'));
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
 
   return (
-    <ScrollView className="flex-1" contentContainerClassName="px-7 pb-8">
-      <Text className="text-white font-sans text-xl font-semibold mb-1 mt-6">Trainer Code</Text>
+    <ScrollView
+      className="flex-1"
+      contentContainerClassName="px-7 pb-8"
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text className="text-white font-sans text-xl font-semibold mb-1 mt-6">
+        {t('onboarding.trainerCode.title')}
+      </Text>
       <Text className="text-text-secondary text-sm mb-8">
-        Got a trainer code? Enter it to connect directly.
+        {t('onboarding.trainerCode.subtitle')}
       </Text>
 
-      <ToggleOption label="Do you have a trainer code?" value={hasTrainer} onToggle={setHasTrainer} className="mb-6" />
-
-      {hasTrainer && (
-        <View className="mb-6">
+      <form.Field name="code">
+        {(field) => (
           <TextInput
-            label="Trainer Code"
-            placeholder="ST-XXXXX"
-            value={code}
-            onChangeText={setCode}
+            label={t('onboarding.trainerCode.label')}
+            placeholder={t('onboarding.trainerCode.placeholder')}
+            value={field.state.value}
+            onChangeText={(v) => {
+              setApiError(null);
+              field.handleChange(v);
+            }}
+            onBlur={field.handleBlur}
             autoCapitalize="characters"
+            autoCorrect={false}
+            error={firstError(field.state.meta.errors)}
           />
-        </View>
-      )}
+        )}
+      </form.Field>
 
-      <PrimaryButton title={hasTrainer ? 'Connect with Trainer' : 'Find a Trainer'} onPress={onNext} />
-      <SecondaryButton title="Skip for now" onPress={() => router.replace('/(client)/home')} className="mt-3" />
+      {apiError ? (
+        <Text className="text-red-400 font-sans text-sm mt-2">{apiError}</Text>
+      ) : null}
+
+      <View className="mt-8">
+        <PrimaryButton
+          title={loading ? t('common.loading') : t('onboarding.trainerCode.submit')}
+          loading={loading}
+          onPress={() => form.handleSubmit()}
+        />
+      </View>
     </ScrollView>
   );
 }

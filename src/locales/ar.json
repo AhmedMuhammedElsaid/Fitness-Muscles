@@ -136,6 +136,77 @@
       "rtlRestart": "أعد تشغيل التطبيق لتطبيق اتجاه التخطيط الجديد."
     }
   },
+  "onboarding": {
+    "step": "خطوة",
+    "of": "من",
+    "continue": "متابعة",
+    "trainerCode": {
+      "title": "أدخل رمز المدرب",
+      "subtitle": "سيعطيك مدربك رمزاً فريداً للانضمام إلى برنامجه.",
+      "label": "رمز المدرب",
+      "placeholder": "ST-XXXXX",
+      "submit": "الانضمام للبرنامج",
+      "invalidCode": "الرمز غير صالح أو منتهي الصلاحية. يرجى التحقق والمحاولة مجدداً.",
+      "alreadyUsed": "تم استخدام هذا الرمز بالفعل.",
+      "unknownError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    },
+    "basicInfo": {
+      "title": "المعلومات الأساسية",
+      "subtitle": "أخبرنا قليلاً عن نفسك",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "محمد علي",
+      "dateOfBirth": "تاريخ الميلاد",
+      "dateOfBirthPlaceholder": "YYYY-MM-DD",
+      "gender": "الجنس",
+      "genderPlaceholder": "ذكر / أنثى / غير ذلك",
+      "city": "المدينة (اختياري)",
+      "cityPlaceholder": "القاهرة",
+      "country": "الدولة (اختياري)",
+      "countryPlaceholder": "مصر"
+    },
+    "bodyMetrics": {
+      "title": "القياسات الجسمية",
+      "subtitle": "ساعدنا في فهم نقطة البداية",
+      "heightCm": "الطول (سم)",
+      "weightKg": "الوزن الحالي (كجم)",
+      "targetWeightKg": "الوزن المستهدف (كجم)"
+    },
+    "fitnessGoals": {
+      "title": "الأهداف الرياضية",
+      "subtitle": "ماذا تريد أن تحقق؟",
+      "primaryGoal": "الهدف الرئيسي",
+      "workoutTypes": "أنواع التمارين"
+    },
+    "healthRestrictions": {
+      "title": "الصحة والقيود",
+      "subtitle": "هل لديك اعتبارات صحية؟",
+      "medicalConditions": "هل لديك حالات طبية؟",
+      "medicalDetails": "يرجى الوصف",
+      "injuries": "هل لديك إصابات؟",
+      "injuryDetails": "يرجى الوصف",
+      "foodAllergies": "هل لديك حساسية غذائية؟",
+      "allergyDetails": "يرجى إدراجها"
+    },
+    "nutrition": {
+      "title": "التغذية",
+      "subtitle": "هل تتبع نظاماً غذائياً محدداً؟",
+      "dietaryPreference": "التفضيل الغذائي",
+      "timeOfDay": "وقت التمرين المفضل"
+    },
+    "workoutPrefs": {
+      "title": "تفضيلات التمرين",
+      "subtitle": "متى تفضل التدريب؟",
+      "preferredDays": "الأيام المفضلة",
+      "morning": "صباحاً",
+      "afternoon": "ظهراً",
+      "evening": "مساءً"
+    },
+    "requestSent": {
+      "title": "أنت جاهز!",
+      "subtitle": "تم إرسال ملفك الشخصي. سيراجعه مدربك ويعين خطتك قريباً.",
+      "cta": "الذهاب إلى لوحة التحكم"
+    }
+  },
   "client": {
     "tabs": {
       "home": "الرئيسية",
