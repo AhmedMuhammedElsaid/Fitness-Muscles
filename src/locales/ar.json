@@ -135,5 +135,73 @@
       "rtlTitle": "تم تغيير اللغة",
       "rtlRestart": "أعد تشغيل التطبيق لتطبيق اتجاه التخطيط الجديد."
     }
+  },
+  "client": {
+    "tabs": {
+      "home": "الرئيسية",
+      "training": "التدريب",
+      "tips": "النصائح",
+      "profile": "الملف"
+    },
+    "home": {
+      "welcome": "مرحباً بعودتك",
+      "todayWorkout": "تمرين اليوم",
+      "noWorkoutToday": "يوم راحة — استمتع بالتعافي",
+      "noPlan": "لم يتم تعيين خطة بعد",
+      "planPaused": "خطتك موقوفة مؤقتاً",
+      "planCompleted": "اكتملت الخطة",
+      "latestTips": "أحدث النصائح",
+      "noTips": "لا توجد نصائح من مدربك بعد",
+      "resumeWorkout": "استئناف التمرين",
+      "startWorkout": "ابدأ التمرين"
+    },
+    "training": {
+      "title": "التدريب",
+      "week": "أسبوع",
+      "restDay": "راحة",
+      "noPlan": "لم يتم تعيين خطة",
+      "noPlanMsg": "لم يعيّن مدربك خطة بعد.",
+      "startWorkout": "ابدأ",
+      "logRetro": "تسجيل",
+      "done": "تم"
+    },
+    "workout": {
+      "title": "التمرين",
+      "sets": "مجموعات",
+      "reps": "تكرارات",
+      "rest": "راحة",
+      "repsLabel": "التكرارات",
+      "weightLabel": "الوزن (كجم)",
+      "addSet": "+ إضافة مجموعة",
+      "restTimer": "راحة",
+      "skip": "تخطي",
+      "extend": "+15ث",
+      "finishTitle": "إنهاء التمرين",
+      "effortLabel": "الجهد المبذول (1–10)",
+      "notesLabel": "ملاحظات (اختياري)",
+      "finish": "إنهاء",
+      "discard": "إلغاء",
+      "discardConfirm": "هل تريد إلغاء هذا التمرين؟ لن يتم حفظ تقدمك.",
+      "noVideo": "لا يوجد فيديو"
+    },
+    "tips": {
+      "title": "النصائح",
+      "empty": "لا توجد نصائح من مدربك بعد"
+    },
+    "profile": {
+      "title": "الملف الشخصي",
+      "fullName": "الاسم الكامل",
+      "tapToChange": "اضغط للتغيير",
+      "language": "اللغة",
+      "bodyMetrics": "القياسات الجسمية",
+      "height": "الطول (سم)",
+      "weight": "الوزن (كجم)",
+      "history": "سجل الخطط",
+      "noHistory": "لا توجد خطط سابقة",
+      "signOutTitle": "تسجيل الخروج",
+      "signOutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+      "rtlTitle": "تم تغيير اللغة",
+      "rtlRestart": "أعد تشغيل التطبيق لتطبيق اتجاه التخطيط الجديد."
+    }
   }
 }

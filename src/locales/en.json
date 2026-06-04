@@ -135,5 +135,73 @@
       "rtlTitle": "Language Changed",
       "rtlRestart": "Restart the app to apply the new layout direction."
     }
+  },
+  "client": {
+    "tabs": {
+      "home": "Home",
+      "training": "Training",
+      "tips": "Tips",
+      "profile": "Profile"
+    },
+    "home": {
+      "welcome": "Welcome back",
+      "todayWorkout": "Today's Workout",
+      "noWorkoutToday": "Rest day — enjoy the recovery",
+      "noPlan": "No plan assigned yet",
+      "planPaused": "Your plan is paused",
+      "planCompleted": "Plan completed",
+      "latestTips": "Latest Tips",
+      "noTips": "No tips from your coach yet",
+      "resumeWorkout": "Resume Workout",
+      "startWorkout": "Start Workout"
+    },
+    "training": {
+      "title": "Training",
+      "week": "Week",
+      "restDay": "Rest",
+      "noPlan": "No plan assigned",
+      "noPlanMsg": "Your trainer hasn't assigned a plan yet.",
+      "startWorkout": "Start",
+      "logRetro": "Log",
+      "done": "Done"
+    },
+    "workout": {
+      "title": "Workout",
+      "sets": "sets",
+      "reps": "reps",
+      "rest": "Rest",
+      "repsLabel": "Reps",
+      "weightLabel": "Weight (kg)",
+      "addSet": "+ Add Set",
+      "restTimer": "Rest",
+      "skip": "Skip",
+      "extend": "+15s",
+      "finishTitle": "Finish Workout",
+      "effortLabel": "Perceived Effort (1–10)",
+      "notesLabel": "Notes (optional)",
+      "finish": "Finish",
+      "discard": "Discard",
+      "discardConfirm": "Discard this workout? Your progress won't be saved.",
+      "noVideo": "No video"
+    },
+    "tips": {
+      "title": "Tips",
+      "empty": "No tips from your coach yet"
+    },
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full Name",
+      "tapToChange": "Tap to change",
+      "language": "Language",
+      "bodyMetrics": "Body Metrics",
+      "height": "Height (cm)",
+      "weight": "Weight (kg)",
+      "history": "Assignment History",
+      "noHistory": "No past assignments",
+      "signOutTitle": "Sign Out",
+      "signOutConfirm": "Are you sure you want to sign out?",
+      "rtlTitle": "Language Changed",
+      "rtlRestart": "Restart the app to apply the new layout direction."
+    }
   }
 }

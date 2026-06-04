@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   return (
@@ -12,6 +13,8 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
 }
 
 export default function ClientTabLayout() {
+  const { t } = useTranslation();
+
   return (
     <Tabs
       screenOptions={{
@@ -29,36 +32,41 @@ export default function ClientTabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: 'Home',
+          title: t('client.tabs.home'),
           tabBarIcon: ({ focused }) => <TabIcon name="🏠" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="training"
         options={{
-          title: 'Training',
+          title: t('client.tabs.training'),
           tabBarIcon: ({ focused }) => <TabIcon name="💪" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
-          title: 'Chat',
-          tabBarIcon: ({ focused }) => <TabIcon name="💬" focused={focused} />,
+          title: t('client.tabs.tips'),
+          tabBarIcon: ({ focused }) => <TabIcon name="💡" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="meal-plan"
         options={{
-          title: 'Meals',
-          tabBarIcon: ({ focused }) => <TabIcon name="🍽️" focused={focused} />,
+          href: null,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('client.tabs.profile'),
           tabBarIcon: ({ focused }) => <TabIcon name="👤" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="workout"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
