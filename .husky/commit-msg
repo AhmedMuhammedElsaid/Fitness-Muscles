@@ -1,1 +1,3 @@
-npx --no -- commitlint --edit "$1"
+# `npx` shim breaks on the `&` in the project path (see APP_CONTEXT §13),
+# so invoke commitlint through node directly.
+node node_modules/@commitlint/cli/cli.js --edit "$1"
