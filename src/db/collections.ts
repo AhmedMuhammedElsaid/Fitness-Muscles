@@ -2,7 +2,7 @@ import { createCollection } from '@tanstack/db';
 import { queryCollectionOptions } from '@tanstack/query-db-collection';
 import { queryClient } from '@/config/queryClient';
 import { supabase } from '@/config/supabase';
-import type { Database, Tables, TablesInsert } from '@/types/db';
+import type { Database, Tables, TablesInsert, TablesUpdate } from '@/types/db';
 
 type TableName = keyof Database['public']['Tables'];
 
@@ -55,7 +55,7 @@ function defineCollection<TName extends TableName>(
           const filter = Object.fromEntries(pk.map((col) => [col, original[col]]));
           const { error } = await supabase
             .from(table)
-            .update(mutation.changes as Partial<Row>)
+            .update(mutation.changes as TablesUpdate<TName>)
             .match(filter);
           if (error) throw error;
         }
