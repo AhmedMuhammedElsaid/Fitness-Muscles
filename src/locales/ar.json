@@ -224,7 +224,19 @@
       "latestTips": "أحدث النصائح",
       "noTips": "لا توجد نصائح من مدربك بعد",
       "resumeWorkout": "استئناف التمرين",
-      "startWorkout": "ابدأ التمرين"
+      "startWorkout": "ابدأ التمرين",
+      "streakUnit": "يوم متتالٍ",
+      "noStreak": "ابدأ سلسلتك اليوم",
+      "exerciseCount": "{{count}} تمارين",
+      "planProgress": "تقدم الخطة",
+      "weekOf": "الأسبوع {{current}} من {{total}}",
+      "statVolume": "الحجم كجم",
+      "statEffort": "متوسط الجهد",
+      "statWorkouts": "التمارين",
+      "volumeTrend": "اتجاه الحجم",
+      "trendEmpty": "سجّل بعض التمارين لرؤية تقدمك",
+      "tipsTitle": "النصائح",
+      "seeAll": "عرض الكل"
     },
     "training": {
       "title": "التدريب",
@@ -234,7 +246,17 @@
       "noPlanMsg": "لم يعيّن مدربك خطة بعد.",
       "startWorkout": "ابدأ",
       "logRetro": "تسجيل",
-      "done": "تم"
+      "done": "تم",
+      "today": "اليوم"
+    },
+    "days": {
+      "sun": "أحد",
+      "mon": "إثنين",
+      "tue": "ثلاثاء",
+      "wed": "أربعاء",
+      "thu": "خميس",
+      "fri": "جمعة",
+      "sat": "سبت"
     },
     "workout": {
       "title": "التمرين",
@@ -253,10 +275,13 @@
       "finish": "إنهاء",
       "discard": "إلغاء",
       "discardConfirm": "هل تريد إلغاء هذا التمرين؟ لن يتم حفظ تقدمك.",
-      "noVideo": "لا يوجد فيديو"
+      "noVideo": "لا يوجد فيديو",
+      "showVideo": "عرض الفيديو",
+      "hideVideo": "إخفاء الفيديو"
     },
     "tips": {
       "title": "النصائح",
+      "subtitle": "نصائح من مدربك",
       "empty": "لا توجد نصائح من مدربك بعد"
     },
     "profile": {
@@ -269,6 +294,13 @@
       "weight": "الوزن (كجم)",
       "history": "سجل الخطط",
       "noHistory": "لا توجد خطط سابقة",
+      "memberSince": "عضو منذ {{date}}",
+      "currentPlan": "الخطة الحالية",
+      "noPlanActive": "لا توجد خطة نشطة",
+      "goal": "الهدف",
+      "targetWeight": "الوزن المستهدف (كجم)",
+      "account": "الحساب",
+      "editProfile": "تعديل الملف",
       "signOutTitle": "تسجيل الخروج",
       "signOutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
       "rtlTitle": "تم تغيير اللغة",

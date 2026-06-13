@@ -224,7 +224,19 @@
       "latestTips": "Latest Tips",
       "noTips": "No tips from your coach yet",
       "resumeWorkout": "Resume Workout",
-      "startWorkout": "Start Workout"
+      "startWorkout": "Start Workout",
+      "streakUnit": "day streak",
+      "noStreak": "Start your streak today",
+      "exerciseCount": "{{count}} exercises",
+      "planProgress": "Plan Progress",
+      "weekOf": "Week {{current}} of {{total}}",
+      "statVolume": "Volume kg",
+      "statEffort": "Avg Effort",
+      "statWorkouts": "Workouts",
+      "volumeTrend": "Volume Trend",
+      "trendEmpty": "Log a few workouts to see your trend",
+      "tipsTitle": "Tips",
+      "seeAll": "See all"
     },
     "training": {
       "title": "Training",
@@ -234,7 +246,17 @@
       "noPlanMsg": "Your trainer hasn't assigned a plan yet.",
       "startWorkout": "Start",
       "logRetro": "Log",
-      "done": "Done"
+      "done": "Done",
+      "today": "Today"
+    },
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
     },
     "workout": {
       "title": "Workout",
@@ -253,10 +275,13 @@
       "finish": "Finish",
       "discard": "Discard",
       "discardConfirm": "Discard this workout? Your progress won't be saved.",
-      "noVideo": "No video"
+      "noVideo": "No video",
+      "showVideo": "Show Video",
+      "hideVideo": "Hide Video"
     },
     "tips": {
       "title": "Tips",
+      "subtitle": "Advice from your coach",
       "empty": "No tips from your coach yet"
     },
     "profile": {
@@ -269,6 +294,13 @@
       "weight": "Weight (kg)",
       "history": "Assignment History",
       "noHistory": "No past assignments",
+      "memberSince": "Member since {{date}}",
+      "currentPlan": "Current Plan",
+      "noPlanActive": "No active plan",
+      "goal": "Goal",
+      "targetWeight": "Target Weight (kg)",
+      "account": "Account",
+      "editProfile": "Edit Profile",
       "signOutTitle": "Sign Out",
       "signOutConfirm": "Are you sure you want to sign out?",
       "rtlTitle": "Language Changed",
