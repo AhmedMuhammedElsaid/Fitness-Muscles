@@ -18,9 +18,18 @@ import { supabase } from '@/config/supabase';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useUploadAvatar } from '@/api';
 import { planAssignmentsCollection, plansCollection } from '@/db/collections';
-import { PrimaryButton, SecondaryButton, TextInput, Card } from '@/components/ui';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TextInput,
+  Card,
+  Icon,
+  SectionHeader,
+  EmptyState,
+} from '@/components/ui';
 import { firstError } from '@/lib/formError';
 import i18n from '@/lib/i18n';
+import { colors } from '@/theme/tokens';
 
 const profileSchema = z.object({
   fullName: z.string().min(1, 'Name is required'),
@@ -39,6 +48,20 @@ export default function ClientProfileScreen() {
   const myAssignments = (assignments ?? [])
     .filter((a) => a.client_id === profile?.id)
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  const activeAssignment = myAssignments.find(
+    (a) => a.status === 'active' || a.status === 'paused',
+  );
+  const activePlanName = activeAssignment
+    ? ((plans ?? []).find((p) => p.id === activeAssignment.plan_id)?.name ?? null)
+    : null;
+
+  const memberSince = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString(i18n.language, {
+        year: 'numeric',
+        month: 'long',
+      })
+    : null;
 
   const form = useForm({
     defaultValues: { fullName: profile?.full_name ?? '' },
@@ -108,25 +131,52 @@ export default function ClientProfileScreen() {
           {t('client.profile.title')}
         </Text>
 
-        {/* Avatar */}
-        <View className="items-center mb-6">
-          <TouchableOpacity onPress={handlePickAvatar} disabled={avatarSaving}>
-            {profile?.avatar_url ? (
-              <Image
-                source={{ uri: profile.avatar_url }}
-                style={{ width: 80, height: 80, borderRadius: 40 }}
-                contentFit="cover"
-              />
-            ) : (
-              <View className="w-20 h-20 rounded-full bg-surface items-center justify-center">
-                <Text className="text-3xl">👤</Text>
+        {/* Header summary */}
+        <Card className="mb-6">
+          <View className="flex-row items-center gap-4">
+            <TouchableOpacity onPress={handlePickAvatar} disabled={avatarSaving}>
+              {profile?.avatar_url ? (
+                <Image
+                  source={{ uri: profile.avatar_url }}
+                  style={{ width: 80, height: 80, borderRadius: 40 }}
+                  contentFit="cover"
+                />
+              ) : (
+                <View className="w-20 h-20 rounded-full bg-surface items-center justify-center">
+                  <Icon name="person-circle-outline" size={48} color={colors.textSecondary} />
+                </View>
+              )}
+            </TouchableOpacity>
+            <View className="flex-1">
+              <Text className="text-white font-sans text-lg font-semibold" numberOfLines={1}>
+                {profile?.full_name ?? ''}
+              </Text>
+              <Text className="text-text-secondary font-sans text-xs mt-0.5">
+                {avatarSaving ? t('common.saving') : t('client.profile.tapToChange')}
+              </Text>
+
+              <View className="flex-row items-center gap-2 mt-3">
+                <Icon name="clipboard-outline" size={14} color={colors.primary} />
+                <Text className="text-text-secondary font-sans text-xs flex-1" numberOfLines={1}>
+                  {t('client.profile.currentPlan')}:{' '}
+                  {activePlanName ?? t('client.profile.noPlanActive')}
+                </Text>
               </View>
-            )}
-          </TouchableOpacity>
-          <Text className="text-text-secondary font-sans text-xs mt-2">
-            {avatarSaving ? t('common.saving') : t('client.profile.tapToChange')}
-          </Text>
-        </View>
+
+              {memberSince ? (
+                <View className="flex-row items-center gap-2 mt-1.5">
+                  <Icon name="calendar-outline" size={14} color={colors.primary} />
+                  <Text className="text-text-secondary font-sans text-xs flex-1" numberOfLines={1}>
+                    {t('client.profile.memberSince', { date: memberSince })}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+          </View>
+        </Card>
+
+        {/* Account section */}
+        <SectionHeader title={t('client.profile.account')} icon="settings-outline" />
 
         {/* Name form */}
         <Card className="mb-4">
@@ -152,13 +202,17 @@ export default function ClientProfileScreen() {
         {/* Language toggle */}
         <Card className="mb-4">
           <View className="flex-row justify-between items-center">
-            <Text className="text-white font-sans text-sm">
-              {t('client.profile.language')}
-            </Text>
+            <View className="flex-row items-center gap-2">
+              <Icon name="language" size={18} color={colors.textSecondary} />
+              <Text className="text-white font-sans text-sm">
+                {t('client.profile.language')}
+              </Text>
+            </View>
             <TouchableOpacity
               onPress={handleToggleLanguage}
-              className="bg-primary/20 border border-primary/40 rounded-lg px-3 py-1.5"
+              className="flex-row items-center gap-1.5 bg-primary/20 border border-primary/40 rounded-lg px-3 py-1.5"
             >
+              <Icon name="globe-outline" size={16} color={colors.primary} />
               <Text className="text-primary font-sans text-sm">
                 {i18n.language === 'ar' ? 'English' : 'العربية'}
               </Text>
@@ -167,36 +221,40 @@ export default function ClientProfileScreen() {
         </Card>
 
         {/* Assignment history */}
-        <Text className="text-white font-sans font-medium mb-3">
-          {t('client.profile.history')}
-        </Text>
+        <SectionHeader title={t('client.profile.history')} icon="time-outline" />
         {myAssignments.length === 0 ? (
           <Card className="mb-4">
-            <Text className="text-text-secondary font-sans text-sm text-center py-2">
-              {t('client.profile.noHistory')}
-            </Text>
+            <EmptyState icon="time-outline" message={t('client.profile.noHistory')} />
           </Card>
         ) : (
           myAssignments.map((a) => {
             const plan = (plans ?? []).find((p) => p.id === a.plan_id);
             return (
               <Card key={a.id} className="mb-3">
-                <Text className="text-white font-sans font-medium">
-                  {plan?.name ?? a.plan_id}
-                </Text>
-                <Text className="text-text-secondary font-sans text-xs mt-1">
-                  {a.start_date} · {a.status}
-                </Text>
+                <View className="flex-row items-center gap-3">
+                  <Icon name="barbell-outline" size={20} color={colors.primary} />
+                  <View className="flex-1">
+                    <Text className="text-white font-sans font-medium" numberOfLines={1}>
+                      {plan?.name ?? a.plan_id}
+                    </Text>
+                    <Text className="text-text-secondary font-sans text-xs mt-1">
+                      {a.start_date} · {a.status}
+                    </Text>
+                  </View>
+                </View>
               </Card>
             );
           })
         )}
 
-        <SecondaryButton
-          title={t('common.signOut')}
-          onPress={handleSignOut}
-          className="mt-2"
-        />
+        <View className="flex-row items-center justify-center gap-2 mt-2">
+          <Icon name="log-out-outline" size={18} color={colors.textSecondary} flipRTL />
+          <SecondaryButton
+            title={t('common.signOut')}
+            onPress={handleSignOut}
+            className="flex-1"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
