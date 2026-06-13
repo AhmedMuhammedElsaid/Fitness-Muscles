@@ -1,16 +1,6 @@
 import { Tabs } from 'expo-router';
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  return (
-    <View className="items-center justify-center pt-2">
-      <Text className={`text-xs font-sans ${focused ? 'text-primary' : 'text-text-muted'}`}>
-        {name}
-      </Text>
-    </View>
-  );
-}
+import { Icon } from '@/components/ui';
 
 export default function ClientTabLayout() {
   const { t } = useTranslation();
@@ -33,21 +23,27 @@ export default function ClientTabLayout() {
         name="home"
         options={{
           title: t('client.tabs.home'),
-          tabBarIcon: ({ focused }) => <TabIcon name="🏠" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="training"
         options={{
           title: t('client.tabs.training'),
-          tabBarIcon: ({ focused }) => <TabIcon name="💪" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'barbell' : 'barbell-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
           title: t('client.tabs.tips'),
-          tabBarIcon: ({ focused }) => <TabIcon name="💡" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'bulb' : 'bulb-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -60,7 +56,9 @@ export default function ClientTabLayout() {
         name="profile"
         options={{
           title: t('client.tabs.profile'),
-          tabBarIcon: ({ focused }) => <TabIcon name="👤" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'person' : 'person-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
