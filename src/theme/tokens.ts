@@ -9,6 +9,7 @@ export const colors = {
   textMuted: '#666666',
   success: '#4CAF50',
   warning: '#FFC107',
+  danger: '#EF4444',
   border: '#3A3A3A',
   progressTrack: '#3A3A3A',
   progressFill: '#E8DEB5',

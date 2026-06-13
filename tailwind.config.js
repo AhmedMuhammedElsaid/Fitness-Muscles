@@ -19,6 +19,7 @@ module.exports = {
         'text-muted': '#666666',
         success: '#4CAF50',
         warning: '#FFC107',
+        danger: '#EF4444',
         border: '#3A3A3A',
         'progress-track': '#3A3A3A',
         'progress-fill': '#E8DEB5',

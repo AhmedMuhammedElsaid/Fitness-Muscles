@@ -72,6 +72,7 @@ function defineCollection<TName extends TableName>(
   );
 }
 
+export const profilesCollection = defineCollection('profiles', ['id']);
 export const exercisesCollection = defineCollection('exercises', ['id']);
 export const workoutsCollection = defineCollection('workouts', ['id']);
 export const workoutExercisesCollection = defineCollection('workout_exercises', [
