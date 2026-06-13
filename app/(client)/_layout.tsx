@@ -64,7 +64,7 @@ export default function ClientTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="workout"
+        name="workout/[planDayId]"
         options={{
           href: null,
         }}
