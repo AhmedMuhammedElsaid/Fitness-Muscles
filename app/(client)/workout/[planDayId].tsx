@@ -21,6 +21,8 @@ import {
   workoutExercisesCollection,
 } from '@/db/collections';
 import { logProgress } from '@/db/mutations';
+import { Icon, ProgressRing } from '@/components/ui';
+import { colors } from '@/theme/tokens';
 import { useSessionStore } from '@/stores/sessionStore';
 import { extractVideoId, toEmbedUrl } from '@/lib/youtube';
 import {
@@ -40,6 +42,7 @@ type Exercise = Tables<'exercises'>;
 function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void }) {
   const { t } = useTranslation();
   const [remaining, setRemaining] = useState(seconds);
+  const [total, setTotal] = useState(seconds);
   const ref = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -57,23 +60,33 @@ function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
     return () => clearInterval(ref.current!);
   }, [onDone]);
 
+  const progress = total > 0 ? (remaining / total) * 100 : 0;
+
   return (
     <View className="bg-surface-elevated rounded-card p-4 mb-4 items-center">
-      <Text className="text-text-secondary font-sans text-xs mb-1">
+      <Text className="text-text-secondary font-sans text-xs mb-3">
         {t('client.workout.restTimer')}
       </Text>
-      <Text className="text-primary font-sans text-4xl font-bold">{remaining}s</Text>
-      <View className="flex-row gap-3 mt-3">
+      <ProgressRing progress={progress} size={120} strokeWidth={10} color={colors.primary}>
+        <Text className="text-primary font-sans text-4xl font-bold">{remaining}</Text>
+        <Text className="text-text-muted font-sans text-xs">s</Text>
+      </ProgressRing>
+      <View className="flex-row gap-3 mt-4">
         <TouchableOpacity
-          className="border border-primary rounded-lg px-4 py-2"
-          onPress={() => setRemaining((r) => r + 15)}
+          className="flex-row items-center gap-1.5 border border-primary rounded-lg px-4 py-2"
+          onPress={() => {
+            setRemaining((r) => r + 15);
+            setTotal((tt) => tt + 15);
+          }}
         >
+          <Icon name="add" size={16} color={colors.primary} />
           <Text className="text-primary font-sans text-sm">{t('client.workout.extend')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-surface rounded-lg px-4 py-2"
+          className="flex-row items-center gap-1.5 bg-surface rounded-lg px-4 py-2"
           onPress={onDone}
         >
+          <Icon name="play-skip-forward" size={16} color={colors.textSecondary} />
           <Text className="text-text-secondary font-sans text-sm">{t('client.workout.skip')}</Text>
         </TouchableOpacity>
       </View>
@@ -138,7 +151,7 @@ function SetRow({
         onPress={handleCheck}
         disabled={done}
       >
-        {done ? <Text className="text-background font-bold text-xs">✓</Text> : null}
+        {done ? <Icon name="checkmark" size={16} color={colors.background} /> : null}
       </TouchableOpacity>
     </View>
   );
@@ -174,20 +187,30 @@ function ExerciseCard({
 
       {videoId ? (
         showVideo ? (
-          <View className="rounded-card overflow-hidden mb-3" style={{ height: 180 }}>
-            <WebView
-              source={{ uri: toEmbedUrl(videoId) }}
-              allowsFullscreenVideo
-              mediaPlaybackRequiresUserAction={false}
-              style={{ flex: 1 }}
-            />
+          <View className="mb-3">
+            <TouchableOpacity
+              className="flex-row items-center justify-center gap-1.5 py-2"
+              onPress={() => setShowVideo(false)}
+            >
+              <Icon name="chevron-up" size={16} color={colors.primary} />
+              <Text className="text-primary font-sans text-sm">{t('client.workout.hideVideo')}</Text>
+            </TouchableOpacity>
+            <View className="rounded-card overflow-hidden" style={{ height: 180 }}>
+              <WebView
+                source={{ uri: toEmbedUrl(videoId) }}
+                allowsFullscreenVideo
+                mediaPlaybackRequiresUserAction={false}
+                style={{ flex: 1 }}
+              />
+            </View>
           </View>
         ) : (
           <TouchableOpacity
-            className="bg-surface rounded-card py-3 items-center mb-3"
+            className="flex-row items-center justify-center gap-2 bg-surface rounded-card py-3 mb-3"
             onPress={() => setShowVideo(true)}
           >
-            <Text className="text-primary font-sans text-sm">▶ Show Video</Text>
+            <Icon name="play-circle" size={18} color={colors.primary} />
+            <Text className="text-primary font-sans text-sm">{t('client.workout.showVideo')}</Text>
           </TouchableOpacity>
         )
       ) : null}
@@ -262,9 +285,11 @@ function FinishSheet({
       />
 
       <TouchableOpacity
-        className="bg-primary rounded-button py-4 items-center mb-3"
+        className="bg-primary rounded-button py-4 flex-row items-center justify-center gap-2 mb-3"
+        activeOpacity={0.85}
         onPress={() => onFinish(effort, notes)}
       >
+        <Icon name="checkmark-done" size={18} color={colors.background} />
         <Text className="text-background font-sans font-semibold">{t('client.workout.finish')}</Text>
       </TouchableOpacity>
 
@@ -367,11 +392,13 @@ export default function WorkoutScreen() {
     <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom']}>
       {/* Header */}
       <View className="flex-row items-center justify-between px-7 pt-4 pb-3">
-        <TouchableOpacity onPress={handleDiscard}>
+        <TouchableOpacity className="flex-row items-center gap-1.5" onPress={handleDiscard}>
+          <Icon name="trash-outline" size={16} color={colors.textSecondary} />
           <Text className="text-text-secondary font-sans text-sm">{t('client.workout.discard')}</Text>
         </TouchableOpacity>
         <Text className="text-white font-sans font-semibold">{t('client.workout.title')}</Text>
-        <TouchableOpacity onPress={() => setShowFinish(true)}>
+        <TouchableOpacity className="flex-row items-center gap-1.5" onPress={() => setShowFinish(true)}>
+          <Icon name="checkmark-done" size={16} color={colors.primary} />
           <Text className="text-primary font-sans font-semibold">{t('client.workout.finish')}</Text>
         </TouchableOpacity>
       </View>
