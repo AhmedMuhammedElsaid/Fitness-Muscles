@@ -12,7 +12,8 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:android:preview": "eas build --platform android --profile preview"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
