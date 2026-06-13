@@ -16,6 +16,7 @@ const VARIANT_COLOR: Record<BadgeVariant, string> = {
   muted: colors.textMuted,
 };
 
+// 8-digit-hex alpha suffix: requires VARIANT_COLOR tokens to be 6-digit hex (#RRGGBB).
 const TINT = '20';
 
 export function Badge({ label, variant = 'muted', className }: BadgeProps) {

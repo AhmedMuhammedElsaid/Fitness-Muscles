@@ -1,28 +1,11 @@
 import type { Tables } from '@/types/db';
 import type { TrendPoint } from '@/components/ui';
+import { MS_PER_DAY, parseLocalDate, planCoords, startOfDay, weekStartSeries } from './dateWeeks';
 
 type Assignment = Tables<'plan_assignments'>;
 type CoachClient = Tables<'coach_clients'>;
 type PlanDay = Tables<'plan_days'>;
 type ProgressLog = Tables<'progress_logs'>;
-
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-/** Sunday 00:00 local for the week containing `d`. */
-function startOfWeek(d: Date): Date {
-  const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  local.setDate(local.getDate() - local.getDay());
-  return local;
-}
-
-function startOfDay(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
-/** Whole days between two dates, ignoring time-of-day. */
-function dayDiff(later: Date, earlier: Date): number {
-  return Math.round((startOfDay(later).getTime() - startOfDay(earlier).getTime()) / MS_PER_DAY);
-}
 
 /** Count of coach_clients rows whose status is 'active'. */
 export function activeClientCount(coachClients: CoachClient[]): number {
@@ -43,11 +26,7 @@ export function weeklyCompletionSeries(
   weeks = 6,
   now: Date = new Date(),
 ): TrendPoint[] {
-  const currentWeekStart = startOfWeek(now);
-  const points: TrendPoint[] = [];
-  for (let i = weeks - 1; i >= 0; i--) {
-    const weekStart = new Date(currentWeekStart);
-    weekStart.setDate(weekStart.getDate() - i * 7);
+  return weekStartSeries(weeks, now).map(({ weekStart, label }) => {
     const start = weekStart.getTime();
     const end = start + 7 * MS_PER_DAY;
     let value = 0;
@@ -55,9 +34,8 @@ export function weeklyCompletionSeries(
       const t = new Date(log.completed_at).getTime();
       if (t >= start && t < end) value += 1;
     }
-    points.push({ label: `${weekStart.getDate()}/${weekStart.getMonth() + 1}`, value });
-  }
-  return points;
+    return { label, value };
+  });
 }
 
 /**
@@ -113,9 +91,8 @@ export function clientAdherence(
   }
   if (scheduled.size === 0) return 0;
 
-  const start = startOfDay(new Date(assignment.start_date));
-  const elapsed = dayDiff(now, start);
-  if (elapsed < 0) return 0;
+  const start = parseLocalDate(assignment.start_date);
+  if (planCoords(assignment, now) === null) return 0;
 
   const completedDays = new Set<number>();
   for (const log of progressLogs) {
@@ -126,10 +103,9 @@ export function clientAdherence(
   let expected = 0;
   let done = 0;
   const cursor = new Date(start);
-  for (let i = 0; i <= elapsed; i++) {
-    const week = Math.floor(i / 7) + 1;
-    const dow = cursor.getDay();
-    if (scheduled.has(`${week}:${dow}`)) {
+  while (cursor.getTime() <= now.getTime()) {
+    const coords = planCoords(assignment, cursor);
+    if (coords !== null && scheduled.has(`${coords.week}:${coords.dow}`)) {
       expected += 1;
       if (completedDays.has(startOfDay(cursor).getTime())) done += 1;
     }

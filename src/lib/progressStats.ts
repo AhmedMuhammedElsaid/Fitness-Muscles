@@ -1,4 +1,5 @@
 import type { Tables } from '@/types/db';
+import { MS_PER_DAY, planCoords, startOfDay, weekStartSeries } from './dateWeeks';
 
 type Assignment = Tables<'plan_assignments'>;
 type PlanDay = Tables<'plan_days'>;
@@ -8,34 +9,6 @@ type SetLog = Tables<'set_logs'>;
 export interface WeeklyVolumePoint {
   label: string;
   value: number;
-}
-
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-/** Sunday 00:00 local for the week containing `d`. */
-function startOfWeek(d: Date): Date {
-  const local = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  local.setDate(local.getDate() - local.getDay());
-  return local;
-}
-
-function startOfDay(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
-/** Whole days between two dates, ignoring time-of-day. */
-function dayDiff(later: Date, earlier: Date): number {
-  return Math.round((startOfDay(later).getTime() - startOfDay(earlier).getTime()) / MS_PER_DAY);
-}
-
-/**
- * Maps a calendar date to its 1-based plan week + day_of_week for the given assignment.
- * Returns null when the date precedes start_date (no scheduled work yet).
- */
-function planCoords(assignment: Assignment, date: Date): { week: number; dow: number } | null {
-  const elapsed = dayDiff(date, new Date(assignment.start_date));
-  if (elapsed < 0) return null;
-  return { week: Math.floor(elapsed / 7) + 1, dow: date.getDay() };
 }
 
 /**
@@ -151,15 +124,8 @@ export function weeklyVolumeSeries(
   weeks: number,
   now: Date = new Date(),
 ): WeeklyVolumePoint[] {
-  const currentWeekStart = startOfWeek(now);
-  const points: WeeklyVolumePoint[] = [];
-  for (let i = weeks - 1; i >= 0; i--) {
-    const weekStart = new Date(currentWeekStart);
-    weekStart.setDate(weekStart.getDate() - i * 7);
-    points.push({
-      label: `${weekStart.getDate()}/${weekStart.getMonth() + 1}`,
-      value: weekVolume(progressLogs, setLogs, weekStart),
-    });
-  }
-  return points;
+  return weekStartSeries(weeks, now).map(({ weekStart, label }) => ({
+    label,
+    value: weekVolume(progressLogs, setLogs, weekStart),
+  }));
 }

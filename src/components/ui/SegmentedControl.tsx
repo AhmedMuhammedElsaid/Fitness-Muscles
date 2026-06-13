@@ -22,6 +22,8 @@ export function SegmentedControl({ segments, value, onChange, className }: Segme
             key={segment.key}
             onPress={() => onChange(segment.key)}
             activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
             className={`flex-1 items-center justify-center rounded-full py-1.5 ${
               selected ? 'bg-primary' : ''
             }`}
