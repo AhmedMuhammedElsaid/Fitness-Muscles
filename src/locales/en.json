@@ -151,7 +151,9 @@
       "title": "Tips",
       "placeholder": "Share a tip with your clients...",
       "post": "Post",
-      "empty": "No tips posted yet. Your clients will see them here."
+      "empty": "No tips posted yet. Your clients will see them here.",
+      "deleteTitle": "Delete Tip",
+      "deleteConfirm": "Delete this tip?"
     },
     "profile": {
       "title": "Profile",
@@ -161,7 +163,10 @@
       "signOutTitle": "Sign Out",
       "signOutConfirm": "Are you sure you want to sign out?",
       "rtlTitle": "Language Changed",
-      "rtlRestart": "Restart the app to apply the new layout direction."
+      "rtlRestart": "Restart the app to apply the new layout direction.",
+      "role": "Coach",
+      "memberSince": "Member since {{date}}",
+      "account": "Account"
     }
   },
   "onboarding": {

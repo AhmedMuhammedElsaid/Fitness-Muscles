@@ -312,6 +312,10 @@ export async function postTip(body: string): Promise<string> {
   return id;
 }
 
+export async function deleteTip(id: string): Promise<void> {
+  await commit(() => tipsCollection.delete(id));
+}
+
 // ─── Onboarding ───────────────────────────────────────────────────────────────
 
 /**

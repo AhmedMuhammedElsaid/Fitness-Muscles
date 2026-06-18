@@ -254,7 +254,7 @@ Source: `src/db/mutations.ts`. Each wraps a collection's optimistic `insert`/`up
 | `updateWorkout(id, input)` / `deleteWorkout(id)` | `workoutsCollection.update` / `.delete` (Programs hub workout edit/delete) | coach programs (PE) |
 | `assignPlan(input)` | `planAssignmentsCollection.insert` (+ optional `update` old → `completed` when `replaceAssignmentId` set) | coach plans (P4) |
 | `logProgress(input)` | `progressLogsCollection.insert` (upsert) + per-set `setLogsCollection.insert` | client workout (P5) |
-| `postTip(body)` | `tipsCollection.insert` | coach tips (P4) |
+| `postTip(body)` / `deleteTip(id)` | `tipsCollection.insert` / `.delete` | coach tips (P4, delete PF) |
 | `redeemInvite(code)` | `supabase.rpc('redeem_invite', { invite_code })` then `coachClientsCollection.refetch()` — NOT a collection mutation; `23505`/`22023` throw | onboarding (P6) |
 
 **Non-collection ops** (`src/api/`, TanStack Query `useMutation`): `useGenerateInvite()` (`generate_invite_code` RPC, coach-only) · `useUploadAvatar()` (uploads to `avatars` bucket at `{userId}/avatar.{ext}`, writes `profiles.avatar_url`). No video upload — videos are YouTube URLs.
