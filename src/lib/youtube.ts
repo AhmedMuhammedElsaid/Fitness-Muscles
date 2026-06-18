@@ -23,3 +23,7 @@ export function toEmbedUrl(id: string): string {
 export function toWatchUrl(id: string): string {
   return `https://www.youtube.com/watch?v=${id}`;
 }
+
+export function toThumbnailUrl(id: string): string {
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}

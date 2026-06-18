@@ -5,6 +5,7 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
+  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -14,9 +15,15 @@ import { useLiveQuery } from '@tanstack/react-db';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { exercisesCollection, workoutExercisesCollection, workoutsCollection } from '@/db/collections';
-import { addWorkoutExercise, createWorkout } from '@/db/mutations';
+import {
+  addWorkoutExercise,
+  createWorkout,
+  deleteWorkout,
+  removeWorkoutExercise,
+  updateWorkout,
+} from '@/db/mutations';
 import { FlashList } from '@/lib/list';
-import { PrimaryButton, TextInput, Card } from '@/components/ui';
+import { PrimaryButton, TextInput, Card, IconButton, EmptyState } from '@/components/ui';
 import { firstError } from '@/lib/formError';
 import type { Tables } from '@/types/db';
 
@@ -52,6 +59,7 @@ export function WorkoutsView() {
   const { data: workoutExercises } = useLiveQuery(workoutExercisesCollection);
 
   const [builderVisible, setBuilderVisible] = useState(false);
+  const [editTarget, setEditTarget] = useState<Workout | null>(null);
   const [saving, setSaving] = useState(false);
 
   const getExercisesForWorkout = (workoutId: string): WorkoutExercise[] =>
@@ -72,28 +80,96 @@ export function WorkoutsView() {
     onSubmit: async ({ value }) => {
       setSaving(true);
       try {
-        const workoutId = await createWorkout({
-          name: value.name,
-          notes: value.notes || null,
-        });
-        for (let i = 0; i < value.exercises.length; i++) {
-          const ex = value.exercises[i];
-          await addWorkoutExercise({
-            workoutId,
-            exerciseId: ex.exerciseId,
-            position: i + 1,
-            sets: parseInt(ex.sets, 10) || 3,
-            reps: parseInt(ex.reps, 10) || 10,
-            restSeconds: parseInt(ex.restSeconds, 10) || 60,
+        if (editTarget) {
+          await updateWorkout(editTarget.id, {
+            name: value.name,
+            notes: value.notes || null,
           });
+          for (const we of getExercisesForWorkout(editTarget.id)) {
+            await removeWorkoutExercise(we.workout_id, we.position);
+          }
+          for (let i = 0; i < value.exercises.length; i++) {
+            const ex = value.exercises[i];
+            await addWorkoutExercise({
+              workoutId: editTarget.id,
+              exerciseId: ex.exerciseId,
+              position: i + 1,
+              sets: parseInt(ex.sets, 10) || 3,
+              reps: parseInt(ex.reps, 10) || 10,
+              restSeconds: parseInt(ex.restSeconds, 10) || 60,
+            });
+          }
+        } else {
+          const workoutId = await createWorkout({
+            name: value.name,
+            notes: value.notes || null,
+          });
+          for (let i = 0; i < value.exercises.length; i++) {
+            const ex = value.exercises[i];
+            await addWorkoutExercise({
+              workoutId,
+              exerciseId: ex.exerciseId,
+              position: i + 1,
+              sets: parseInt(ex.sets, 10) || 3,
+              reps: parseInt(ex.reps, 10) || 10,
+              restSeconds: parseInt(ex.restSeconds, 10) || 60,
+            });
+          }
         }
-        setBuilderVisible(false);
-        form.reset();
+        closeBuilder();
       } finally {
         setSaving(false);
       }
     },
   });
+
+  const openCreate = () => {
+    setEditTarget(null);
+    form.reset();
+    setBuilderVisible(true);
+  };
+
+  const openEdit = (workout: Workout) => {
+    setEditTarget(workout);
+    form.reset({
+      name: workout.name,
+      notes: workout.notes ?? '',
+      exercises: getExercisesForWorkout(workout.id).map((we) => ({
+        exerciseId: we.exercise_id,
+        sets: String(we.sets),
+        reps: String(we.reps),
+        restSeconds: String(we.rest_seconds),
+      })),
+    });
+    setBuilderVisible(true);
+  };
+
+  const closeBuilder = () => {
+    setBuilderVisible(false);
+    setEditTarget(null);
+    form.reset();
+  };
+
+  const handleDelete = (workout: Workout) => {
+    Alert.alert(
+      t('coach.workouts.deleteTitle', 'Delete Workout'),
+      t('coach.workouts.deleteConfirm', 'Delete this workout?'),
+      [
+        { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+        {
+          text: t('common.delete', 'Delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteWorkout(workout.id);
+            } catch {
+              // toast already fired
+            }
+          },
+        },
+      ],
+    );
+  };
 
   const exerciseList = (exercises ?? []) as Exercise[];
 
@@ -104,21 +180,19 @@ export function WorkoutsView() {
           <Text className="text-white font-sans text-xl font-semibold">
             {t('coach.workouts.title', 'Workouts')}
           </Text>
-          <TouchableOpacity
-            onPress={() => setBuilderVisible(true)}
-            className="bg-primary/20 border border-primary/40 rounded-lg px-3 py-2"
-          >
-            <Text className="text-primary font-sans text-sm font-medium">
-              {t('coach.workouts.addBtn', '+ New')}
-            </Text>
-          </TouchableOpacity>
+          <IconButton
+            name="add-circle"
+            onPress={openCreate}
+            accessibilityLabel={t('coach.workouts.addBtn', 'New workout')}
+          />
         </View>
 
         {(workouts ?? []).length === 0 ? (
           <View className="flex-1 items-center justify-center px-7">
-            <Text className="text-text-secondary font-sans text-sm text-center">
-              {t('coach.workouts.empty', 'No workouts yet. Tap + New to create one.')}
-            </Text>
+            <EmptyState
+              icon="clipboard-outline"
+              message={t('coach.workouts.empty', 'No workouts yet. Tap + New to create one.')}
+            />
           </View>
         ) : (
           <FlashList
@@ -130,19 +204,43 @@ export function WorkoutsView() {
               const exList = getExercisesForWorkout(item.id);
               return (
                 <Card className="mb-3">
-                  <Text className="text-white font-sans font-medium mb-2">{item.name}</Text>
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text className="text-white font-sans font-medium flex-1 mr-1">{item.name}</Text>
+                    <View className="flex-row items-center">
+                      <IconButton
+                        name="create-outline"
+                        onPress={() => openEdit(item)}
+                        accessibilityLabel={t('common.edit', 'Edit')}
+                        size={18}
+                      />
+                      <IconButton
+                        name="trash-outline"
+                        onPress={() => handleDelete(item)}
+                        accessibilityLabel={t('common.delete', 'Delete')}
+                        variant="danger"
+                        size={18}
+                      />
+                    </View>
+                  </View>
                   {exList.length === 0 ? (
                     <Text className="text-text-muted font-sans text-xs">
                       {t('coach.workouts.noExercises', 'No exercises')}
                     </Text>
                   ) : (
                     exList.map((we) => (
-                      <View key={`${we.workout_id}:${we.position}`} className="flex-row justify-between py-0.5">
-                        <Text className="text-text-secondary font-sans text-xs flex-1">
+                      <View
+                        key={`${we.workout_id}:${we.position}`}
+                        className="flex-row justify-between items-center py-1"
+                      >
+                        <Text className="text-text-secondary font-sans text-xs flex-1 mr-2">
                           {we.position}. {getExerciseName(we.exercise_id)}
                         </Text>
                         <Text className="text-text-muted font-sans text-xs">
-                          {we.sets}×{we.reps} · {we.rest_seconds}s
+                          {t('coach.workouts.setsReps', '{{sets}}×{{reps}} · {{rest}}s', {
+                            sets: we.sets,
+                            reps: we.reps,
+                            rest: we.rest_seconds,
+                          })}
                         </Text>
                       </View>
                     ))
@@ -158,7 +256,7 @@ export function WorkoutsView() {
       <Modal
         visible={builderVisible}
         animationType="slide"
-        onRequestClose={() => setBuilderVisible(false)}
+        onRequestClose={closeBuilder}
       >
         <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom']}>
           <KeyboardAvoidingView
@@ -167,11 +265,15 @@ export function WorkoutsView() {
           >
             <View className="px-7 pt-4 pb-2 flex-row justify-between items-center">
               <Text className="text-white font-sans text-lg font-semibold">
-                {t('coach.workouts.builderTitle', 'New Workout')}
+                {editTarget
+                  ? t('coach.workouts.editTitle', 'Edit Workout')
+                  : t('coach.workouts.builderTitle', 'New Workout')}
               </Text>
-              <TouchableOpacity onPress={() => { setBuilderVisible(false); form.reset(); }}>
-                <Text className="text-text-secondary font-sans">✕</Text>
-              </TouchableOpacity>
+              <IconButton
+                name="close"
+                onPress={closeBuilder}
+                accessibilityLabel={t('common.cancel', 'Cancel')}
+              />
             </View>
 
             <ScrollView className="flex-1 px-7" keyboardShouldPersistTaps="handled">
@@ -236,16 +338,15 @@ export function WorkoutsView() {
                           <Card key={index} className="mb-3">
                             <View className="flex-row justify-between items-center mb-2">
                               <Text className="text-text-secondary font-sans text-xs font-medium">
-                                {t('coach.workouts.form.exerciseN', `Exercise ${index + 1}`)}
+                                {t('coach.workouts.form.exerciseN', 'Exercise {{n}}', { n: index + 1 })}
                               </Text>
-                              <TouchableOpacity
+                              <IconButton
+                                name="trash-outline"
                                 onPress={() => field.removeValue(index)}
-                                className="bg-red-500/20 rounded px-2 py-0.5"
-                              >
-                                <Text className="text-red-400 font-sans text-xs">
-                                  {t('common.remove', 'Remove')}
-                                </Text>
-                              </TouchableOpacity>
+                                accessibilityLabel={t('common.remove', 'Remove')}
+                                variant="danger"
+                                size={16}
+                              />
                             </View>
 
                             {/* Exercise picker (select from list) */}

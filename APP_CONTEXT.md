@@ -251,6 +251,7 @@ Source: `src/db/mutations.ts`. Each wraps a collection's optimistic `insert`/`up
 | Mutation | Writes | Caller (phase) |
 |---|---|---|
 | `createExercise(input)` | `exercisesCollection.insert` (normalizes `videoUrl` via `src/lib/youtube.ts` → clean watch URL) | coach library (P4) |
+| `updateWorkout(id, input)` / `deleteWorkout(id)` | `workoutsCollection.update` / `.delete` (Programs hub workout edit/delete) | coach programs (PE) |
 | `assignPlan(input)` | `planAssignmentsCollection.insert` (+ optional `update` old → `completed` when `replaceAssignmentId` set) | coach plans (P4) |
 | `logProgress(input)` | `progressLogsCollection.insert` (upsert) + per-set `setLogsCollection.insert` | client workout (P5) |
 | `postTip(body)` | `tipsCollection.insert` | coach tips (P4) |

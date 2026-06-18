@@ -17,11 +17,21 @@ import { z } from 'zod';
 import WebView from 'react-native-webview';
 import { exercisesCollection } from '@/db/collections';
 import { createExercise, updateExercise, deleteExercise } from '@/db/mutations';
+import { Image } from 'expo-image';
 import { FlashList } from '@/lib/list';
-import { PrimaryButton, SecondaryButton, TextInput, Card } from '@/components/ui';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TextInput,
+  Card,
+  IconButton,
+  ChipSelector,
+  EmptyState,
+  Badge,
+} from '@/components/ui';
 import { firstError } from '@/lib/formError';
 import { useDebouncedValue } from '@/lib/pacer';
-import { extractVideoId, toEmbedUrl } from '@/lib/youtube';
+import { extractVideoId, toEmbedUrl, toThumbnailUrl } from '@/lib/youtube';
 import type { Tables } from '@/types/db';
 import { ilike } from '@tanstack/db';
 
@@ -159,7 +169,28 @@ export function LibraryView() {
     [debouncedSearch],
   );
 
-  const exercises: Exercise[] = (allExercises ?? []) as Exercise[];
+  const allMatches: Exercise[] = (allExercises ?? []) as Exercise[];
+
+  const [muscleFilters, setMuscleFilters] = useState<string[]>([]);
+  const [equipmentFilters, setEquipmentFilters] = useState<string[]>([]);
+
+  const muscleOptions = Array.from(
+    new Set(allMatches.map((e) => e.muscle_group).filter((g): g is string => !!g)),
+  ).sort();
+  const equipmentOptions = Array.from(
+    new Set(allMatches.map((e) => e.equipment).filter((g): g is string => !!g)),
+  ).sort();
+
+  const exercises = allMatches.filter(
+    (e) =>
+      (muscleFilters.length === 0 || (e.muscle_group != null && muscleFilters.includes(e.muscle_group))) &&
+      (equipmentFilters.length === 0 || (e.equipment != null && equipmentFilters.includes(e.equipment))),
+  );
+
+  const toggleFilter = (
+    value: string,
+    setter: React.Dispatch<React.SetStateAction<string[]>>,
+  ) => setter((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
 
   const [formVisible, setFormVisible] = useState(false);
   const [editTarget, setEditTarget] = useState<Exercise | null>(null);
@@ -223,14 +254,11 @@ export function LibraryView() {
           <Text className="text-white font-sans text-xl font-semibold">
             {t('coach.library.title', 'Exercise Library')}
           </Text>
-          <TouchableOpacity
+          <IconButton
+            name="add-circle"
             onPress={() => { setEditTarget(null); setFormVisible(true); }}
-            className="bg-primary/20 border border-primary/40 rounded-lg px-3 py-2"
-          >
-            <Text className="text-primary font-sans text-sm font-medium">
-              {t('coach.library.addBtn', '+ Add')}
-            </Text>
-          </TouchableOpacity>
+            accessibilityLabel={t('coach.library.addBtn', 'Add exercise')}
+          />
         </View>
 
         <View className="px-7 mb-3">
@@ -241,13 +269,35 @@ export function LibraryView() {
           />
         </View>
 
+        {(muscleOptions.length > 0 || equipmentOptions.length > 0) ? (
+          <View className="px-7 mb-3 gap-2">
+            {muscleOptions.length > 0 ? (
+              <ChipSelector
+                options={muscleOptions}
+                selected={muscleFilters}
+                onToggle={(v) => toggleFilter(v, setMuscleFilters)}
+              />
+            ) : null}
+            {equipmentOptions.length > 0 ? (
+              <ChipSelector
+                options={equipmentOptions}
+                selected={equipmentFilters}
+                onToggle={(v) => toggleFilter(v, setEquipmentFilters)}
+              />
+            ) : null}
+          </View>
+        ) : null}
+
         {exercises.length === 0 ? (
           <View className="flex-1 items-center justify-center px-7">
-            <Text className="text-text-secondary font-sans text-sm text-center">
-              {search
-                ? t('coach.library.noResults', 'No exercises match your search')
-                : t('coach.library.empty', 'No exercises yet. Tap + Add to create one.')}
-            </Text>
+            <EmptyState
+              icon="barbell-outline"
+              message={
+                search || muscleFilters.length > 0 || equipmentFilters.length > 0
+                  ? t('coach.library.noResults', 'No exercises match your search')
+                  : t('coach.library.empty', 'No exercises yet. Tap + Add to create one.')
+              }
+            />
           </View>
         ) : (
           <FlashList
@@ -255,46 +305,56 @@ export function LibraryView() {
 
             contentContainerStyle={{ paddingHorizontal: 28, paddingBottom: 32 }}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <Card className="mb-3">
-                <View className="flex-row justify-between items-start">
-                  <View className="flex-1 mr-3">
-                    <Text className="text-white font-sans font-medium">{item.name}</Text>
-                    {item.muscle_group ? (
-                      <Text className="text-text-secondary font-sans text-xs mt-0.5">
-                        {item.muscle_group}
-                      </Text>
-                    ) : null}
-                  </View>
-                  <View className="flex-row gap-2">
-                    {item.video_url ? (
+            renderItem={({ item }) => {
+              const thumbId = item.video_url ? extractVideoId(item.video_url) : null;
+              return (
+                <Card className="mb-3">
+                  <View className="flex-row items-center">
+                    {thumbId ? (
                       <TouchableOpacity
                         onPress={() => setVideoTarget(item)}
-                        className="bg-primary/20 rounded-md px-2 py-1"
+                        activeOpacity={0.8}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('coach.library.playVideo', 'Play video')}
+                        className="mr-3"
                       >
-                        <Text className="text-primary font-sans text-xs">▶</Text>
+                        <Image
+                          source={{ uri: toThumbnailUrl(thumbId) }}
+                          style={{ width: 64, height: 48, borderRadius: 8 }}
+                          contentFit="cover"
+                        />
                       </TouchableOpacity>
                     ) : null}
-                    <TouchableOpacity
-                      onPress={() => { setEditTarget(item); setFormVisible(true); }}
-                      className="bg-surface rounded-md px-2 py-1"
-                    >
-                      <Text className="text-text-secondary font-sans text-xs">
-                        {t('common.edit', 'Edit')}
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => handleDelete(item)}
-                      className="bg-red-500/20 rounded-md px-2 py-1"
-                    >
-                      <Text className="text-red-400 font-sans text-xs">
-                        {t('common.delete', 'Del')}
-                      </Text>
-                    </TouchableOpacity>
+                    <View className="flex-1 mr-1">
+                      <Text className="text-white font-sans font-medium">{item.name}</Text>
+                      <View className="flex-row flex-wrap gap-2 mt-1">
+                        {item.muscle_group ? (
+                          <Badge label={item.muscle_group} variant="muted" />
+                        ) : null}
+                        {item.equipment ? (
+                          <Badge label={item.equipment} variant="muted" />
+                        ) : null}
+                      </View>
+                    </View>
+                    <View className="flex-row items-center">
+                      <IconButton
+                        name="create-outline"
+                        onPress={() => { setEditTarget(item); setFormVisible(true); }}
+                        accessibilityLabel={t('common.edit', 'Edit')}
+                        size={18}
+                      />
+                      <IconButton
+                        name="trash-outline"
+                        onPress={() => handleDelete(item)}
+                        accessibilityLabel={t('common.delete', 'Delete')}
+                        variant="danger"
+                        size={18}
+                      />
+                    </View>
                   </View>
-                </View>
-              </Card>
-            )}
+                </Card>
+              );
+            }}
           />
         )}
       </View>

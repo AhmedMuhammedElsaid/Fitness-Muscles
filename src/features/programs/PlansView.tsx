@@ -19,12 +19,23 @@ import {
   planAssignmentsCollection,
   planDaysCollection,
   plansCollection,
+  profilesCollection,
   workoutsCollection,
 } from '@/db/collections';
 import { assignPlan, clearPlanDay, createPlan, setPlanDay } from '@/db/mutations';
 import { FlashList } from '@/lib/list';
-import { PrimaryButton, SecondaryButton, TextInput, Card } from '@/components/ui';
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TextInput,
+  Card,
+  IconButton,
+  EmptyState,
+  Avatar,
+  Icon,
+} from '@/components/ui';
 import { firstError } from '@/lib/formError';
+import { colors } from '@/theme/tokens';
 import type { Tables } from '@/types/db';
 
 type Plan = Tables<'plans'>;
@@ -44,15 +55,43 @@ const planSchema = z.object({
 });
 
 
+function GridLegend() {
+  const { t } = useTranslation();
+  return (
+    <View className="flex-row flex-wrap gap-4 mb-4">
+      <View className="flex-row items-center gap-1.5">
+        <View className="w-4 h-4 rounded bg-primary/20 border border-primary/40" />
+        <Text className="text-text-secondary font-sans text-xs">
+          {t('coach.plans.legendWorkout', 'Workout')}
+        </Text>
+      </View>
+      <View className="flex-row items-center gap-1.5">
+        <View className="w-4 h-4 rounded bg-surface border border-surface" />
+        <Text className="text-text-secondary font-sans text-xs">
+          {t('coach.plans.legendRest', 'Rest')}
+        </Text>
+      </View>
+      <View className="flex-row items-center gap-1.5">
+        <View className="w-4 h-4 rounded bg-surface/40 border border-dashed border-surface" />
+        <Text className="text-text-secondary font-sans text-xs">
+          {t('coach.plans.legendEmpty', 'Empty')}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 function PlanGrid({
   plan,
   planDays,
   workouts,
+  dayLabels,
   onCellPress,
 }: {
   plan: Plan;
   planDays: PlanDay[];
   workouts: Workout[];
+  dayLabels: string[];
   onCellPress: (weekNumber: number, dayOfWeek: number, existing: PlanDay | undefined) => void;
 }) {
   const durationWeeks = plan.duration_weeks ?? 1;
@@ -61,7 +100,7 @@ function PlanGrid({
     planDays.find((pd) => pd.plan_id === plan.id && pd.week_number === week && pd.day_of_week === day);
 
   const getWorkoutName = (workoutId: string | null): string => {
-    if (!workoutId) return 'Rest';
+    if (!workoutId) return '';
     return workouts.find((w) => w.id === workoutId)?.name ?? '?';
   };
 
@@ -70,9 +109,9 @@ function PlanGrid({
       <View>
         {/* Header row */}
         <View className="flex-row mb-1">
-          <View className="w-10" />
-          {DAY_LABELS.map((d) => (
-            <View key={d} className="w-20 items-center">
+          <View className="w-12" />
+          {dayLabels.map((d) => (
+            <View key={d} className="w-24 items-center">
               <Text className="text-text-secondary font-sans text-xs">{d}</Text>
             </View>
           ))}
@@ -80,7 +119,7 @@ function PlanGrid({
 
         {Array.from({ length: durationWeeks }, (_, i) => i + 1).map((week) => (
           <View key={week} className="flex-row mb-1">
-            <View className="w-10 justify-center">
+            <View className="w-12 justify-center">
               <Text className="text-text-muted font-sans text-xs">W{week}</Text>
             </View>
             {Array.from({ length: 7 }, (_, day) => {
@@ -91,7 +130,8 @@ function PlanGrid({
                 <TouchableOpacity
                   key={day}
                   onPress={() => onCellPress(week, day, entry)}
-                  className={`w-20 h-12 mr-0.5 rounded items-center justify-center ${
+                  activeOpacity={0.7}
+                  className={`w-24 h-16 mr-1 rounded-lg items-center justify-center px-1 ${
                     hasWorkout
                       ? 'bg-primary/20 border border-primary/40'
                       : isRest
@@ -99,14 +139,18 @@ function PlanGrid({
                         : 'bg-surface/40 border border-dashed border-surface'
                   }`}
                 >
-                  <Text
-                    className={`font-sans text-xs text-center px-1 ${
-                      hasWorkout ? 'text-primary' : isRest ? 'text-text-muted' : 'text-surface/0'
-                    }`}
-                    numberOfLines={2}
-                  >
-                    {entry ? getWorkoutName(entry.workout_id) : ''}
-                  </Text>
+                  {hasWorkout ? (
+                    <Text
+                      className="font-sans text-xs text-center text-primary"
+                      numberOfLines={2}
+                    >
+                      {getWorkoutName(entry?.workout_id ?? null)}
+                    </Text>
+                  ) : isRest ? (
+                    <Icon name="moon-outline" size={16} color={colors.textMuted} />
+                  ) : (
+                    <Icon name="add" size={16} color={colors.textMuted} />
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -124,6 +168,16 @@ export function PlansView() {
   const { data: workouts } = useLiveQuery(workoutsCollection);
   const { data: clients } = useLiveQuery(coachClientsCollection);
   const { data: assignments } = useLiveQuery(planAssignmentsCollection);
+  const { data: profiles } = useLiveQuery(profilesCollection);
+
+  const dayLabels = t('coach.plans.dayLabels', {
+    returnObjects: true,
+    defaultValue: DAY_LABELS,
+  }) as string[];
+
+  const clientName = (clientId: string): string =>
+    (profiles ?? []).find((p) => p.id === clientId)?.full_name ??
+    t('coach.clients.unknownClient', 'Unknown client');
 
   const [createVisible, setCreateVisible] = useState(false);
   const [gridPlan, setGridPlan] = useState<Plan | null>(null);
@@ -252,10 +306,15 @@ export function PlansView() {
           /* ── Grid Editor View ── */
           <View className="flex-1">
             <View className="px-7 pt-4 pb-3 flex-row justify-between items-center">
-              <TouchableOpacity onPress={() => setGridPlan(null)} className="mr-3">
-                <Text className="text-primary font-sans text-sm">← Back</Text>
-              </TouchableOpacity>
-              <Text className="text-white font-sans font-semibold flex-1" numberOfLines={1}>
+              <IconButton
+                name="arrow-back"
+                onPress={() => setGridPlan(null)}
+                accessibilityLabel={t('common.back', 'Back')}
+              />
+              <Text
+                className="text-white font-sans font-semibold flex-1 mx-2"
+                numberOfLines={1}
+              >
                 {liveGridPlan.name}
               </Text>
               <TouchableOpacity
@@ -271,10 +330,12 @@ export function PlansView() {
               <Text className="text-text-secondary font-sans text-xs mb-3">
                 {t('coach.plans.tapCell', 'Tap a cell to set a workout or rest day')}
               </Text>
+              <GridLegend />
               <PlanGrid
                 plan={liveGridPlan}
                 planDays={planDaysList.filter((pd) => pd.plan_id === liveGridPlan.id)}
                 workouts={workoutsList}
+                dayLabels={dayLabels}
                 onCellPress={handleCellPress}
               />
             </ScrollView>
@@ -286,20 +347,18 @@ export function PlansView() {
               <Text className="text-white font-sans text-xl font-semibold">
                 {t('coach.plans.title', 'Plans')}
               </Text>
-              <TouchableOpacity
+              <IconButton
+                name="add-circle"
                 onPress={() => setCreateVisible(true)}
-                className="bg-primary/20 border border-primary/40 rounded-lg px-3 py-2"
-              >
-                <Text className="text-primary font-sans text-sm font-medium">
-                  {t('coach.plans.addBtn', '+ New')}
-                </Text>
-              </TouchableOpacity>
+                accessibilityLabel={t('coach.plans.addBtn', 'New plan')}
+              />
             </View>
             {plansList.length === 0 ? (
               <View className="flex-1 items-center justify-center px-7">
-                <Text className="text-text-secondary font-sans text-sm text-center">
-                  {t('coach.plans.empty', 'No plans yet. Tap + New to create one.')}
-                </Text>
+                <EmptyState
+                  icon="calendar-outline"
+                  message={t('coach.plans.empty', 'No plans yet. Tap + New to create one.')}
+                />
               </View>
             ) : (
               <FlashList
@@ -308,12 +367,17 @@ export function PlansView() {
                 contentContainerStyle={{ paddingHorizontal: 28, paddingBottom: 32 }}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => setGridPlan(item)}>
+                  <TouchableOpacity onPress={() => setGridPlan(item)} activeOpacity={0.7}>
                     <Card className="mb-3">
-                      <Text className="text-white font-sans font-medium">{item.name}</Text>
-                      <Text className="text-text-secondary font-sans text-xs mt-1">
-                        {item.duration_weeks} {t('coach.plans.weeks', 'weeks')}
-                      </Text>
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-1 mr-2">
+                          <Text className="text-white font-sans font-medium">{item.name}</Text>
+                          <Text className="text-text-secondary font-sans text-xs mt-1">
+                            {item.duration_weeks} {t('coach.plans.weeks', 'weeks')}
+                          </Text>
+                        </View>
+                        <Icon name="chevron-forward" size={18} color={colors.textMuted} flipRTL />
+                      </View>
                     </Card>
                   </TouchableOpacity>
                 )}
@@ -403,7 +467,7 @@ export function PlansView() {
           <View className="bg-surface rounded-2xl p-5 w-full">
             <Text className="text-white font-sans font-semibold mb-1">
               {cellModalState
-                ? `W${cellModalState.weekNumber} · ${DAY_LABELS[cellModalState.dayOfWeek]}`
+                ? `W${cellModalState.weekNumber} · ${dayLabels[cellModalState.dayOfWeek]}`
                 : ''}
             </Text>
             <Text className="text-text-secondary font-sans text-xs mb-4">
@@ -490,16 +554,21 @@ export function PlansView() {
                       <TouchableOpacity
                         key={c.client_id}
                         onPress={() => setAssignClientId(c.client_id)}
-                        className={`py-3 px-3 rounded-lg mb-1 ${
+                        className={`flex-row items-center gap-3 py-2 px-3 rounded-lg mb-1 ${
                           assignClientId === c.client_id ? 'bg-primary/20' : 'bg-background'
                         }`}
                       >
+                        <Avatar
+                          uri={(profiles ?? []).find((p) => p.id === c.client_id)?.avatar_url}
+                          name={clientName(c.client_id)}
+                          size="sm"
+                        />
                         <Text
                           className={`font-sans text-sm ${
                             assignClientId === c.client_id ? 'text-primary' : 'text-white'
                           }`}
                         >
-                          {c.client_id.slice(0, 8)}…
+                          {clientName(c.client_id)}
                         </Text>
                       </TouchableOpacity>
                     ))

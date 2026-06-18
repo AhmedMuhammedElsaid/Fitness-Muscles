@@ -13,7 +13,8 @@
     "remove": "Remove",
     "create": "Create",
     "signOut": "Sign Out",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "back": "Back"
   },
   "mutation": {
     "failed": "Something went wrong. Please try again."
@@ -83,7 +84,8 @@
         "videoUrl": "YouTube URL",
         "muscleGroup": "Muscle Group",
         "equipment": "Equipment"
-      }
+      },
+      "playVideo": "Play video"
     },
     "workouts": {
       "title": "Workouts",
@@ -102,7 +104,11 @@
         "reps": "Reps",
         "rest": "Rest(s)",
         "exerciseN": "Exercise"
-      }
+      },
+      "editTitle": "Edit Workout",
+      "deleteTitle": "Delete Workout",
+      "deleteConfirm": "Delete this workout?",
+      "setsReps": "{{sets}}×{{reps}} · {{rest}}s"
     },
     "plans": {
       "title": "Plans",
@@ -127,7 +133,19 @@
         "name": "Plan Name *",
         "durationWeeks": "Duration (weeks)",
         "description": "Description"
-      }
+      },
+      "legendWorkout": "Workout",
+      "legendRest": "Rest",
+      "legendEmpty": "Empty",
+      "dayLabels": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ]
     },
     "tips": {
       "title": "Tips",

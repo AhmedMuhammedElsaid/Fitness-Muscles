@@ -13,7 +13,8 @@
     "remove": "إزالة",
     "create": "إنشاء",
     "signOut": "تسجيل الخروج",
-    "loading": "جارٍ التحميل..."
+    "loading": "جارٍ التحميل...",
+    "back": "رجوع"
   },
   "mutation": {
     "failed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
@@ -83,7 +84,8 @@
         "videoUrl": "رابط يوتيوب",
         "muscleGroup": "مجموعة العضلات",
         "equipment": "المعدات"
-      }
+      },
+      "playVideo": "تشغيل الفيديو"
     },
     "workouts": {
       "title": "التمارين",
@@ -102,7 +104,11 @@
         "reps": "التكرارات",
         "rest": "الراحة(ث)",
         "exerciseN": "تمرين"
-      }
+      },
+      "editTitle": "تعديل التمرين",
+      "deleteTitle": "حذف التمرين",
+      "deleteConfirm": "هل تريد حذف هذا التمرين؟",
+      "setsReps": "{{sets}}×{{reps}} · {{rest}}ث"
     },
     "plans": {
       "title": "الخطط",
@@ -127,7 +133,19 @@
         "name": "اسم الخطة *",
         "durationWeeks": "المدة (أسابيع)",
         "description": "الوصف"
-      }
+      },
+      "legendWorkout": "تمرين",
+      "legendRest": "راحة",
+      "legendEmpty": "فارغ",
+      "dayLabels": [
+        "أحد",
+        "إثن",
+        "ثلا",
+        "أرب",
+        "خمي",
+        "جمع",
+        "سبت"
+      ]
     },
     "tips": {
       "title": "النصائح",
