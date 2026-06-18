@@ -46,3 +46,4 @@ plan.md
 /scripts/seed-coach.ts
 /scripts/seed-sample-data.mjs
 .vscode
+/.claude

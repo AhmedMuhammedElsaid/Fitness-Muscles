@@ -13,7 +13,9 @@
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "prepare": "husky",
-    "build:android:preview": "eas build --platform android --profile preview"
+    "build:android:preview": "eas build --platform android --profile preview",
+    "run:android:preview": "eas build:run --platform android --profile preview",
+    "preview:android": "eas build --platform android --profile preview && eas build:run --platform android --profile preview --latest"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -42,6 +44,7 @@
     "expo-sharing": "~55.0.20",
     "expo-splash-screen": "~55.0.10",
     "expo-status-bar": "~55.0.4",
+    "expo-updates": "~55.0.24",
     "i18next": "^26.3.1",
     "intl-pluralrules": "^2.0.1",
     "nativewind": "^4.2.2",
