@@ -41,11 +41,8 @@ yarn-error.*
 /ios
 /android
 
-deploy.md
 app_feedback.md
 plan.md
-APP_CONTEXT.md
-CLAUDE.md
 /scripts/seed-coach.ts
 /scripts/seed-sample-data.mjs
 .vscode
