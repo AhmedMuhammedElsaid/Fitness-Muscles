@@ -13,6 +13,6 @@ export { SectionHeader } from './SectionHeader';
 export { EmptyState } from './EmptyState';
 export { StreakBadge } from './StreakBadge';
 export { Avatar } from './Avatar';
-export { Badge } from './Badge';
+export { Badge, type BadgeVariant } from './Badge';
 export { SegmentedControl } from './SegmentedControl';
 export { IconButton } from './IconButton';

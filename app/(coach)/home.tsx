@@ -16,6 +16,7 @@ import {
   EmptyState,
   Avatar,
   Badge,
+  type BadgeVariant,
 } from '@/components/ui';
 import { useSessionStore } from '@/stores/sessionStore';
 import {
@@ -25,8 +26,6 @@ import {
 } from '@/lib/coachStats';
 import { startOfWeek, MS_PER_DAY } from '@/lib/dateWeeks';
 import { colors } from '@/theme/tokens';
-
-type BadgeVariant = 'success' | 'warning' | 'danger' | 'muted';
 
 function effortVariant(effort: number): BadgeVariant {
   if (effort >= 8) return 'success';

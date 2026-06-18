@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import { colors } from '@/theme/tokens';
 
-type BadgeVariant = 'success' | 'warning' | 'danger' | 'muted';
+export type BadgeVariant = 'success' | 'warning' | 'danger' | 'muted';
 
 interface BadgeProps {
   label: string;
