@@ -22,11 +22,14 @@
     "tabs": {
       "home": "Home",
       "clients": "Clients",
-      "library": "Library",
-      "workouts": "Workouts",
-      "plans": "Plans",
+      "programs": "Programs",
       "tips": "Tips",
       "profile": "Profile"
+    },
+    "programs": {
+      "library": "Library",
+      "workouts": "Workouts",
+      "plans": "Plans"
     },
     "home": {
       "welcome": "Welcome back",

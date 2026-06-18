@@ -117,7 +117,7 @@ function PlanGrid({
   );
 }
 
-export default function PlansScreen() {
+export function PlansView() {
   const { t } = useTranslation();
   const { data: plans } = useLiveQuery(plansCollection);
   const { data: planDays } = useLiveQuery(planDaysCollection);
@@ -246,7 +246,7 @@ export default function PlansScreen() {
     : null;
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <View className="flex-1 bg-background">
       <View className="flex-1">
         {liveGridPlan ? (
           /* ── Grid Editor View ── */
@@ -533,6 +533,6 @@ export default function PlansScreen() {
           </SafeAreaView>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

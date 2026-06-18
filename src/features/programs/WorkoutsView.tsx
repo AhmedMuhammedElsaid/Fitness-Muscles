@@ -45,7 +45,7 @@ const workoutSchema = z.object({
 });
 
 
-export default function WorkoutsScreen() {
+export function WorkoutsView() {
   const { t } = useTranslation();
   const { data: workouts } = useLiveQuery(workoutsCollection);
   const { data: exercises } = useLiveQuery(exercisesCollection);
@@ -98,7 +98,7 @@ export default function WorkoutsScreen() {
   const exerciseList = (exercises ?? []) as Exercise[];
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <View className="flex-1 bg-background">
       <View className="flex-1">
         <View className="px-7 pt-4 pb-3 flex-row justify-between items-center">
           <Text className="text-white font-sans text-xl font-semibold">
@@ -341,6 +341,6 @@ export default function WorkoutsScreen() {
           </KeyboardAvoidingView>
         </SafeAreaView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

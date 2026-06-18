@@ -141,7 +141,7 @@ function ExerciseForm({
   );
 }
 
-export default function LibraryScreen() {
+export function LibraryView() {
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search, 300);
@@ -217,7 +217,7 @@ export default function LibraryScreen() {
   const videoId = videoTarget?.video_url ? extractVideoId(videoTarget.video_url) : null;
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <View className="flex-1 bg-background">
       <View className="flex-1">
         <View className="px-7 pt-4 pb-3 flex-row justify-between items-center">
           <Text className="text-white font-sans text-xl font-semibold">
@@ -373,6 +373,6 @@ export default function LibraryScreen() {
           )}
         </SafeAreaView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

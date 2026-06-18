@@ -22,11 +22,14 @@
     "tabs": {
       "home": "الرئيسية",
       "clients": "العملاء",
-      "library": "المكتبة",
-      "workouts": "التمارين",
-      "plans": "الخطط",
+      "programs": "البرامج",
       "tips": "النصائح",
       "profile": "الملف"
+    },
+    "programs": {
+      "library": "المكتبة",
+      "workouts": "التمارين",
+      "plans": "الخطط"
     },
     "home": {
       "welcome": "مرحباً بعودتك",

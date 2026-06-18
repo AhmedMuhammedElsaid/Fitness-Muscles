@@ -1,17 +1,10 @@
 import { Tabs } from 'expo-router';
-import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-
-function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
-  return (
-    <View className="items-center justify-center pt-1">
-      <Text className={`text-base ${focused ? 'opacity-100' : 'opacity-50'}`}>{emoji}</Text>
-    </View>
-  );
-}
+import { Icon } from '@/components/ui';
 
 export default function CoachTabLayout() {
   const { t } = useTranslation();
+
   return (
     <Tabs
       screenOptions={{
@@ -31,49 +24,45 @@ export default function CoachTabLayout() {
         name="home"
         options={{
           title: t('coach.tabs.home', 'Home'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'stats-chart' : 'stats-chart-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="clients"
         options={{
           title: t('coach.tabs.clients', 'Clients'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="👥" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'people' : 'people-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="library"
+        name="programs"
         options={{
-          title: t('coach.tabs.library', 'Library'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📚" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="workouts"
-        options={{
-          title: t('coach.tabs.workouts', 'Workouts'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💪" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="plans"
-        options={{
-          title: t('coach.tabs.plans', 'Plans'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📅" focused={focused} />,
+          title: t('coach.tabs.programs', 'Programs'),
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'albums' : 'albums-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="tips"
         options={{
           title: t('coach.tabs.tips', 'Tips'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💡" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'bulb' : 'bulb-outline'} size={24} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: t('coach.tabs.profile', 'Profile'),
-          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'person' : 'person-outline'} size={24} color={color} />
+          ),
         }}
       />
     </Tabs>
