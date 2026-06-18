@@ -104,6 +104,8 @@ React Native (Expo SDK 55, RN 0.83, React 19) mobile app. **Single-tenant**: one
 - **YouTube WebView embed** — needs `allowsFullscreenVideo` and `mediaPlaybackRequiresUserAction={false}` on `<WebView>`, else the play button is unresponsive on iOS.
 - **Supabase JWT refresh** — supabase-js auto-refreshes the access token roughly every 60 min. TanStack DB collections' `queryFn` MUST call `supabase.auth.getSession()` at call time (not at module init), and the session store MUST invalidate queries on `TOKEN_REFRESHED` / `SIGNED_OUT` events. Skip this and long-running sessions 401 silently.
 - **Coach seed precedes client onboarding** — the trainer's `profiles.role` must be flipped to `'coach'` (via Supabase dashboard or `scripts/seed-coach.ts`) BEFORE any client can redeem an invite. Otherwise the `coach_clients` FK insert fails.
+- **Node version** — system node is **v12**, too old for eslint/commitlint/tsc. Run `export PATH="$HOME/.nvm/versions/node/v24.15.0/bin:$PATH"` before any `npm run`/`npx`. Husky hooks self-heal this; direct commands don't. (The old "`&` in path breaks npm" pitfall is gone — project moved to `/mnt/c/Unite/Fitness-Muscles-App`, no `&`.)
+- **Commit format** — `[AhmedMuhammedElsaid][type]:description`, single-line subject ≤120 chars (commitlint `header-max-length`), only the `Co-Authored-By` trailer below. No multi-line bullet bodies.
 
 ## Token discipline (mandatory)
 
@@ -128,3 +130,7 @@ Tick boxes as phases complete. Format: ☐ not started · 🟡 in progress · �
 - ✅ Phase 5 — Client UI (Sonnet)
 - ✅ Phase 6 — Onboarding wire-up (Sonnet)
 - ✅ Phase 7 — Cleanup + README + RTL audit (Haiku)
+
+**Post-MVP overhauls (done):**
+- ✅ Client-UX revamp (2026-06-13) — Ionicons nav, Home dashboard with charts/stats, animated primitives, `progressStats` lib.
+- ✅ Coach-UI overhaul (2026-06-18, branch `feat/coach-ui-overhaul`, not yet merged) — 5-tab nav, Programs hub, coach dashboard, avatar'd/named clients, `coachStats` lib, 4 new primitives (`Avatar`/`Badge`/`SegmentedControl`/`IconButton`), `danger` token, `profilesCollection`. Full details in `APP_CONTEXT.md` §3/§4/§6/§13. The `coach_refactor*.md` plan docs were deleted after completion (work captured in APP_CONTEXT + git history).
