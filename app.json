@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Fitness & Muscles",
-    "slug": "fitness-and-muscles",
+    "slug": "fitnessandmuscles-",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -48,7 +48,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "aa9ab236-a124-4566-9848-4e0144554018"
+        "projectId": "8cdb01e1-eb41-42c0-b319-966ea8ab8346"
       }
     },
     "owner": "volunteering-apps",
@@ -56,7 +56,7 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/aa9ab236-a124-4566-9848-4e0144554018"
+      "url": "https://u.expo.dev/8cdb01e1-eb41-42c0-b319-966ea8ab8346"
     }
   }
 }
