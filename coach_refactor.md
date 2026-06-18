@@ -7,7 +7,7 @@
 | **A** | Foundation: 4 primitives, `danger` token, `profilesCollection`, `coachStats.ts` + tests | **Sonnet** | Isolated, well-specified primitives + pure helpers; mechanical with a clear spec. ✅ **DONE** (commits `fdd1d45`, `bd8885d`) |
 | **B** | Navigation restructure: 5 tabs + Programs hub; extract Library/Workouts/Plans into views; delete old routes; i18n migration | **Opus** | Multi-file refactor with route deletion + behavior-preserving extraction; integration risk is high — use the most capable model. ✅ **DONE** (commit `6cf22ca`) |
 | **C** | Home dashboard rebuild (charts, stat cards, recent activity) | **Sonnet** | Pattern is established by `app/(client)/home.tsx`; mirror it with coach data. ✅ **DONE** (commits `df54499`, `3afedf7`) |
-| **D** | Clients redesign (avatars, names, badges, adherence) | **Sonnet** | Screen rewrite with a clear data join; standard judgment. |
+| **D** | Clients redesign (avatars, names, badges, adherence) | **Sonnet** | Screen rewrite with a clear data join; standard judgment. ✅ **DONE** |
 | **E** | Programs sub-views polish (Library filters/thumbnails, Workouts edit/delete, Plans grid) | **Sonnet** | Multiple coordinated UI changes across three views. |
 | **F** | Tips + Profile polish | **Haiku** | Small, mechanical swaps (IconButton, Avatar, EmptyState) over existing logic. |
 | **G** | RTL + i18n audit + final gates + `APP_CONTEXT.md` update | **Haiku** | Verification/cleanup pass; low reasoning load. |
@@ -100,10 +100,12 @@ Each phase is self-contained: **Read-first → Build → Acceptance**. Before an
 - **Built:** Rebuilt `app/(coach)/home.tsx` — `SectionHeader` + 3 `StatCard`s (active clients, active plans via `planAssignmentsCollection`, this-week completions) + `TrendChart` (6-week series via `weeklyCompletionSeries`) + recent-activity rows (Avatar + `full_name` from `profilesCollection` + effort `Badge`) + `EmptyState` when no logs. Deleted the local `StatCard` definition. Exported `BadgeVariant` from `Badge.tsx` (removed local duplicate).
 - **Result:** tsc 0, eslint 0, 51 tests pass. Commits `df54499` (build) + `3afedf7` (fix: export `BadgeVariant` from `Badge.tsx`).
 
-### Phase D — Clients · *Sonnet*
+### Phase D — Clients · *Sonnet* · ✅ DONE
 - **Read-first:** `app/(coach)/clients.tsx`, `src/db/collections.ts` (profiles + assignments + logs), `src/components/ui/{Avatar,Badge,IconButton}.tsx`.
 - **Build:** each row = `Avatar` + real `full_name` (join `profilesCollection` on `id === client_id`) + plan-status `Badge` + last-activity date (`lastActivityAt`). Replace custom invite/remove buttons with `Button`/`IconButton`; remove = `danger`. Detail sheet: avatar, name, assigned plan, adherence `ProgressRing`, remove. Keep `FlashList`.
 - **Acceptance:** named/avatar'd clients; no truncated IDs in the UI. Gates green.
+- **Built:** Rewrote `app/(coach)/clients.tsx` — invite button → `IconButton` (`person-add`); each `FlashList` row = `Avatar` (md) + `full_name` (joined via `profilesCollection`) + last-activity (`lastActivityAt`) + plan-status `Badge` (success/muted). Detail sheet: `lg` Avatar + name + joined date, adherence `ProgressRing` (`clientAdherence`) with plan name, `danger`-styled Remove. New i18n keys (`unknownClient`, `lastActive`, `neverActive`, `assignedPlan`, `adherence`) in en+ar. No truncated IDs remain.
+- **Result:** tsc 0, eslint 0, 51 tests pass.
 
 ### Phase E — Programs sub-views polish · *Sonnet*
 - **Read-first:** the three `src/features/programs/*View.tsx`, `src/components/ui/{IconButton,ChipSelector,Badge}.tsx`.

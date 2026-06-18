@@ -1,13 +1,13 @@
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from '@tanstack/react-db';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { tipsCollection } from '@/db/collections';
-import { postTip } from '@/db/mutations';
+import { deleteTip, postTip } from '@/db/mutations';
 import { FlashList } from '@/lib/list';
-import { PrimaryButton, TextInput, Card } from '@/components/ui';
+import { PrimaryButton, TextInput, Card, IconButton, EmptyState } from '@/components/ui';
 import { firstError } from '@/lib/formError';
 import type { Tables } from '@/types/db';
 
@@ -36,6 +36,27 @@ export default function TipsScreen() {
       form.reset();
     },
   });
+
+  const handleDelete = (tip: Tip) => {
+    Alert.alert(
+      t('coach.tips.deleteTitle', 'Delete Tip'),
+      t('coach.tips.deleteConfirm', 'Delete this tip?'),
+      [
+        { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+        {
+          text: t('common.delete', 'Delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteTip(tip.id);
+            } catch {
+              // toast already fired
+            }
+          },
+        },
+      ],
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
@@ -88,9 +109,10 @@ export default function TipsScreen() {
         {/* Tips feed */}
         {sortedTips.length === 0 ? (
           <View className="flex-1 items-center justify-center px-7">
-            <Text className="text-text-secondary font-sans text-sm text-center">
-              {t('coach.tips.empty', "No tips posted yet. Your clients will see them here.")}
-            </Text>
+            <EmptyState
+              icon="bulb-outline"
+              message={t('coach.tips.empty', 'No tips posted yet. Your clients will see them here.')}
+            />
           </View>
         ) : (
           <FlashList
@@ -100,7 +122,18 @@ export default function TipsScreen() {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <Card className="mb-3">
-                <Text className="text-white font-sans text-sm leading-relaxed">{item.body}</Text>
+                <View className="flex-row items-start">
+                  <Text className="text-white font-sans text-sm leading-relaxed flex-1 mr-1">
+                    {item.body}
+                  </Text>
+                  <IconButton
+                    name="trash-outline"
+                    onPress={() => handleDelete(item)}
+                    accessibilityLabel={t('common.delete', 'Delete')}
+                    variant="danger"
+                    size={18}
+                  />
+                </View>
                 <Text className="text-text-muted font-sans text-xs mt-2">
                   {new Date(item.created_at).toLocaleDateString()}
                 </Text>

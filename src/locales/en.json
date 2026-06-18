@@ -13,7 +13,8 @@
     "remove": "Remove",
     "create": "Create",
     "signOut": "Sign Out",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "back": "Back"
   },
   "mutation": {
     "failed": "Something went wrong. Please try again."
@@ -53,6 +54,11 @@
       "joined": "Joined",
       "hasPlan": "Has plan",
       "noPlan": "No plan",
+      "unknownClient": "Unknown client",
+      "lastActive": "Last active {{date}}",
+      "neverActive": "No activity yet",
+      "assignedPlan": "Assigned plan",
+      "adherence": "Adherence",
       "removeTitle": "Remove Client",
       "removeConfirm": "This will remove the client from your roster. Their history will be preserved.",
       "remove": "Remove",
@@ -78,7 +84,8 @@
         "videoUrl": "YouTube URL",
         "muscleGroup": "Muscle Group",
         "equipment": "Equipment"
-      }
+      },
+      "playVideo": "Play video"
     },
     "workouts": {
       "title": "Workouts",
@@ -97,7 +104,11 @@
         "reps": "Reps",
         "rest": "Rest(s)",
         "exerciseN": "Exercise"
-      }
+      },
+      "editTitle": "Edit Workout",
+      "deleteTitle": "Delete Workout",
+      "deleteConfirm": "Delete this workout?",
+      "setsReps": "{{sets}}×{{reps}} · {{rest}}s"
     },
     "plans": {
       "title": "Plans",
@@ -122,13 +133,27 @@
         "name": "Plan Name *",
         "durationWeeks": "Duration (weeks)",
         "description": "Description"
-      }
+      },
+      "legendWorkout": "Workout",
+      "legendRest": "Rest",
+      "legendEmpty": "Empty",
+      "dayLabels": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ]
     },
     "tips": {
       "title": "Tips",
       "placeholder": "Share a tip with your clients...",
       "post": "Post",
-      "empty": "No tips posted yet. Your clients will see them here."
+      "empty": "No tips posted yet. Your clients will see them here.",
+      "deleteTitle": "Delete Tip",
+      "deleteConfirm": "Delete this tip?"
     },
     "profile": {
       "title": "Profile",
@@ -138,7 +163,10 @@
       "signOutTitle": "Sign Out",
       "signOutConfirm": "Are you sure you want to sign out?",
       "rtlTitle": "Language Changed",
-      "rtlRestart": "Restart the app to apply the new layout direction."
+      "rtlRestart": "Restart the app to apply the new layout direction.",
+      "role": "Coach",
+      "memberSince": "Member since {{date}}",
+      "account": "Account"
     }
   },
   "onboarding": {

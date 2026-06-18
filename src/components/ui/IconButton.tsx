@@ -9,6 +9,8 @@ interface IconButtonProps {
   variant?: 'default' | 'danger';
   size?: number;
   disabled?: boolean;
+  /** Mirror horizontally under RTL — use for directional glyphs (arrows, chevrons). */
+  flipRTL?: boolean;
 }
 
 export function IconButton({
@@ -18,6 +20,7 @@ export function IconButton({
   variant = 'default',
   size = 20,
   disabled = false,
+  flipRTL = false,
 }: IconButtonProps) {
   const color = variant === 'danger' ? colors.danger : colors.textSecondary;
   return (
@@ -32,7 +35,7 @@ export function IconButton({
       className="items-center justify-center p-2.5"
       style={{ opacity: disabled ? 0.4 : 1 }}
     >
-      <Icon name={name} size={size} color={color} />
+      <Icon name={name} size={size} color={color} flipRTL={flipRTL} />
     </TouchableOpacity>
   );
 }

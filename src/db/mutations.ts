@@ -114,6 +114,20 @@ export async function createWorkout(input: CreateWorkoutInput): Promise<string> 
   return id;
 }
 
+export type UpdateWorkoutInput = Partial<CreateWorkoutInput>;
+
+export async function updateWorkout(id: string, input: UpdateWorkoutInput): Promise<void> {
+  const ts = nowIso();
+  const changes: Record<string, unknown> = { updated_at: ts };
+  if (input.name !== undefined) changes.name = input.name;
+  if (input.notes !== undefined) changes.notes = input.notes ?? null;
+  await commit(() => workoutsCollection.update(id, (draft) => Object.assign(draft, changes)));
+}
+
+export async function deleteWorkout(id: string): Promise<void> {
+  await commit(() => workoutsCollection.delete(id));
+}
+
 export interface WorkoutExerciseInput {
   workoutId: string;
   exerciseId: string;
@@ -296,6 +310,10 @@ export async function postTip(body: string): Promise<string> {
     tipsCollection.insert({ id, coach_id: coachId, body, created_at: nowIso() }),
   );
   return id;
+}
+
+export async function deleteTip(id: string): Promise<void> {
+  await commit(() => tipsCollection.delete(id));
 }
 
 // ─── Onboarding ───────────────────────────────────────────────────────────────

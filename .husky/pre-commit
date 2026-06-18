@@ -1,3 +1,11 @@
 # `npm run`/`npx` shims break on the `&` in the project path (see APP_CONTEXT §13),
 # so invoke eslint through node directly.
+
+# Git hooks inherit the system node (v12 here), too old for modern eslint.
+# Prefer the newest nvm-managed node if the active one is older than v18.
+if [ "$(node -e 'process.stdout.write(String(process.versions.node.split(".")[0]))' 2>/dev/null || echo 0)" -lt 18 ]; then
+  NVM_NODE_BIN="$(ls -d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | sort -V | tail -1)"
+  [ -n "$NVM_NODE_BIN" ] && PATH="$NVM_NODE_BIN:$PATH"
+fi
+
 node node_modules/eslint/bin/eslint.js src/ app/
