@@ -410,9 +410,11 @@ export function LibraryView() {
             <Text className="text-white font-sans font-medium flex-1 mr-4" numberOfLines={1}>
               {videoTarget?.name ?? ''}
             </Text>
-            <TouchableOpacity onPress={() => setVideoTarget(null)}>
-              <Text className="text-primary font-sans">✕</Text>
-            </TouchableOpacity>
+            <IconButton
+              name="close"
+              onPress={() => setVideoTarget(null)}
+              accessibilityLabel={t('common.close', 'Close')}
+            />
           </View>
           {videoId ? (
             <View className="w-full aspect-video">

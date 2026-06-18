@@ -72,16 +72,16 @@ Expo Router file-based. Root `app/_layout.tsx` mounts all providers + `<RoleGate
 | `/auth/signup` | `app/auth/signup.tsx` | `[final]` |
 | `/auth/forgot-password` | `app/auth/forgot-password.tsx` | `[scaffolded]` |
 
-**Coach group** (`app/(coach)/` — 7-tab Tabs navigator)
+**Coach group** (`app/(coach)/` — 5-tab Tabs navigator; restructured in coach-UI-overhaul)
 | Route | File | Status |
 |---|---|---|
-| `/(coach)/home` | `app/(coach)/home.tsx` | `[final]` — dashboard (active client count, recent logs) |
-| `/(coach)/clients` | `app/(coach)/clients.tsx` | `[final]` — client list + invite code modal + detail modal |
-| `/(coach)/library` | `app/(coach)/library.tsx` | `[final]` — exercise CRUD + YouTube WebView |
-| `/(coach)/workouts` | `app/(coach)/workouts.tsx` | `[final]` — workout builder with TanStack Form field arrays |
-| `/(coach)/plans` | `app/(coach)/plans.tsx` | `[final]` — plan grid editor + assign modal |
-| `/(coach)/tips` | `app/(coach)/tips.tsx` | `[final]` — tips feed (FlashList) + composer |
-| `/(coach)/profile` | `app/(coach)/profile.tsx` | `[final]` — name/avatar/language/sign-out |
+| `/(coach)/home` | `app/(coach)/home.tsx` | `[final]` — dashboard (StatCards, weekly-completion TrendChart, recent activity w/ avatars) |
+| `/(coach)/clients` | `app/(coach)/clients.tsx` | `[final]` — client list w/ avatars + names + plan badges; invite + detail modals (adherence ring) |
+| `/(coach)/programs` | `app/(coach)/programs.tsx` | `[final]` — **Programs hub**: `SegmentedControl` over Library/Workouts/Plans sub-views |
+| `/(coach)/tips` | `app/(coach)/tips.tsx` | `[final]` — tips feed (FlashList) + composer + per-tip delete |
+| `/(coach)/profile` | `app/(coach)/profile.tsx` | `[final]` — Avatar/name/language/danger sign-out |
+
+Programs sub-views live in `src/features/programs/{Library,Workouts,Plans}View.tsx` (each owns its own modal/form state). The old `app/(coach)/{library,workouts,plans}.tsx` routes were **deleted** — no stale references remain.
 
 **Client group** (`app/(client)/` — Tabs)
 | Route | File | Status |
@@ -143,13 +143,16 @@ Expo Router file-based. Root `app/_layout.tsx` mounts all providers + `<RoleGate
 
 | Screen | Collections read | Mutations fired | i18n prefix |
 |---|---|---|---|
-| `home.tsx` | `coachClientsCollection`, `plansCollection`, `progressLogsCollection` | — | `coach.home.*` |
-| `clients.tsx` | `coachClientsCollection`, `planAssignmentsCollection` | `removeClient`, `useGenerateInvite` | `coach.clients.*` |
-| `library.tsx` | `exercisesCollection` | `createExercise`, `updateExercise`, `deleteExercise` | `coach.library.*` |
-| `workouts.tsx` | `workoutsCollection`, `exercisesCollection`, `workoutExercisesCollection` | `createWorkout`, `addWorkoutExercise` | `coach.workouts.*` |
-| `plans.tsx` | `plansCollection`, `planDaysCollection`, `workoutsCollection`, `coachClientsCollection`, `planAssignmentsCollection` | `createPlan`, `setPlanDay`, `clearPlanDay`, `assignPlan` | `coach.plans.*` |
-| `tips.tsx` | `tipsCollection` | `postTip` | `coach.tips.*` |
+| `home.tsx` | `coachClientsCollection`, `plansCollection`, `progressLogsCollection`, `profilesCollection` | — | `coach.home.*` |
+| `clients.tsx` | `coachClientsCollection`, `planAssignmentsCollection`, `profilesCollection`, `plansCollection`, `planDaysCollection`, `progressLogsCollection` | `removeClient`, `useGenerateInvite` | `coach.clients.*` |
+| `programs.tsx` (hub) | — (delegates to sub-views) | — | `coach.programs.*` |
+| `features/programs/LibraryView` | `exercisesCollection` | `createExercise`, `updateExercise`, `deleteExercise` | `coach.library.*` |
+| `features/programs/WorkoutsView` | `workoutsCollection`, `exercisesCollection`, `workoutExercisesCollection` | `createWorkout`, `updateWorkout`, `deleteWorkout`, `addWorkoutExercise`, `removeWorkoutExercise` | `coach.workouts.*` |
+| `features/programs/PlansView` | `plansCollection`, `planDaysCollection`, `workoutsCollection`, `coachClientsCollection`, `planAssignmentsCollection`, `profilesCollection` | `createPlan`, `setPlanDay`, `clearPlanDay`, `assignPlan` | `coach.plans.*` |
+| `tips.tsx` | `tipsCollection` | `postTip`, `deleteTip` | `coach.tips.*` |
 | `profile.tsx` | `sessionStore` | `useUploadAvatar`, `supabase.from('profiles').update` | `coach.profile.*` |
+
+**(Coach-UI-overhaul)** Coach surface redesigned to match the client flow: 5-tab Ionicons nav, Programs hub (`SegmentedControl`), dashboard with `StatCard`/`TrendChart`/`ProgressRing`, avatar'd/named clients with plan `Badge`s, `coachStats` helper module. New primitives: `Avatar`, `Badge`, `SegmentedControl`, `IconButton` (all RTL-aware via `flipRTL` where directional); `danger` color token.
 
 **Client screens** (all in `app/(client)/`):
 
@@ -206,7 +209,7 @@ Source of truth: `supabase/migrations/0001_init.sql` (tables + RLS + helpers + r
 **Owned by:** Phase 2.
 **Status:** `[live]` _(Phase 2 — Opus, 2026-06-04)_
 
-Source: `src/db/collections.ts`. Built with `@tanstack/db` `createCollection` + `@tanstack/query-db-collection` `queryCollectionOptions`, all sharing `queryClient` (`src/config/queryClient.ts`). Read hook for screens: `useLiveQuery` from `@tanstack/react-db` (re-exported via `src/db/index.ts`). One collection per **realtime-published** table (10); `profiles`/`client_intake`/`coach_invites` are NOT collections (handled via `sessionStore` / Phase 6 direct writes / `redeem_invite` RPC).
+Source: `src/db/collections.ts`. Built with `@tanstack/db` `createCollection` + `@tanstack/query-db-collection` `queryCollectionOptions`, all sharing `queryClient` (`src/config/queryClient.ts`). Read hook for screens: `useLiveQuery` from `@tanstack/react-db` (re-exported via `src/db/index.ts`). 10 realtime-published collections plus `profilesCollection` (added in coach-UI-overhaul, **not** realtime-published — see §13); `client_intake`/`coach_invites` are NOT collections (handled via Phase 6 direct writes / `redeem_invite` RPC).
 
 | Export | Table | Key (`getKey`) | Notes |
 |---|---|---|---|
@@ -220,6 +223,7 @@ Source: `src/db/collections.ts`. Built with `@tanstack/db` `createCollection` + 
 | `setLogsCollection` | `set_logs` | `id` | insert = upsert on `progress_log_id,exercise_id,set_number` |
 | `tipsCollection` | `tips` | `id` | |
 | `coachClientsCollection` | `coach_clients` | `coach_id:client_id` | composite key |
+| `profilesCollection` | `profiles` | `id` | coach resolves client `full_name`/`avatar_url`; **not** realtime-published (loads on initial query + refetch only) |
 
 - **`queryFn`** re-reads `supabase.auth.getSession()` at call time; returns `[]` when no session (avoids 401 on signed-out fetch). The `sessionStore` listener calls `queryClient.invalidateQueries()` on `TOKEN_REFRESHED`/`SIGNED_OUT` (§7).
 - **Write handlers** (`onInsert`/`onUpdate`/`onDelete`) defined generically per collection → optimistic; `onUpdate`/`onDelete` locate rows by `.match(pk)`. RLS rejects unauthorized writes → handler throws → automatic rollback.
@@ -344,6 +348,8 @@ _Later phases add: Maestro E2E in `e2e/`._
 - **(Phase 3) Routing uses `useSegments()[0]`** to determine the current group before redirecting — prevents redirect loops when the user navigates within a group. Phase 4/5 can add nested guards using deeper segment checks if needed.
 - **(Deploy) Sentry source-map auto-upload breaks release EAS builds until a token is configured.** `@sentry/react-native`'s `sentry.gradle` runs `sentry-cli` on every non-debug build to upload source maps; with no `SENTRY_AUTH_TOKEN`/org/project it exits 1 and fails the whole Gradle build (`:app:createBundleReleaseJsAndAssets_SentryUpload_*`). Fix: `SENTRY_DISABLE_AUTO_UPLOAD: "true"` is set in **all three `eas.json` build profiles** (`shouldSentryAutoUploadGeneral()` guard, `sentry.gradle:11`). Runtime Sentry is unaffected — `Sentry.init` is gated on an empty `EXPO_PUBLIC_SENTRY_DSN`. When integrating Sentry for real: set the DSN, add `SENTRY_AUTH_TOKEN` as an EAS secret (never `.env`), pass `organization`/`project` to the Expo plugin in `app.json`, then remove the disable flag.
 - **(Client-UX revamp) Visualization stack: `react-native-svg` (15.15.3, pinned by `expo install`), `@expo/vector-icons` (Ionicons), `react-native-gifted-charts` (pinned `1.4.77`).** gifted-charts is pure-JS (renders through `react-native-svg`, no native module of its own) → New-Arch safe; svg + vector-icons are Expo-managed. Install via `node node_modules/expo/bin/cli install …` (the `&` path breaks `npx`). **Charts/icons must be RTL-aware:** `TrendChart` reverses its data array under `I18nManager.isRTL`; the `Icon` primitive exposes `flipRTL` for directional glyphs only (don't flip checkmarks/non-directional icons). **`ProgressRing`** animates `strokeDashoffset` via `useAnimatedProps` on an `Animated.createAnimatedComponent(Circle)` — the canonical svg+Reanimated pattern; Reanimated is already initialized app-wide (first import in `app/_layout.tsx`), so no extra setup.
+- **(Coach-UI-overhaul) `profilesCollection` is NOT in the realtime publication** (`0001_init.sql` publishes other tables, not `profiles`). It loads via the initial query + `refetch()` fine, so coach screens resolve client `full_name`/`avatar_url` on mount — but a client renaming themselves won't *live*-stream to the coach until a refetch. Accepted by design; do NOT add a migration to publish `profiles`. RLS `profiles_select_coach`/`profiles_select_client` already permit the reads.
+- **(Coach-UI-overhaul) `IconButton` now has `flipRTL`** (added in Phase G) — pass it for directional glyphs (`arrow-back`, chevrons) so they mirror under RTL, same contract as `Icon.flipRTL`. Non-directional icons (trash, edit, close, add) must NOT set it.
 - **(Phase 1) Local verification needs Docker + `supabase start`.** First-run image pull is several GB (~15 min here). Gates used: `supabase db reset`, `supabase test db` (pgTAP, 29 assertions), `supabase gen types typescript --local > src/types/db.ts`. Run supabase via `npx supabase …` (the global binary isn't on PATH; npx works in the Bash tool despite the `&` path).
 
 ---

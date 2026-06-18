@@ -310,6 +310,7 @@ export function PlansView() {
                 name="arrow-back"
                 onPress={() => setGridPlan(null)}
                 accessibilityLabel={t('common.back', 'Back')}
+                flipRTL
               />
               <Text
                 className="text-white font-sans font-semibold flex-1 mx-2"
@@ -504,7 +505,7 @@ export function PlansView() {
                 }}
                 className="py-2"
               >
-                <Text className="text-red-400 font-sans text-sm text-center">
+                <Text className="text-danger font-sans text-sm text-center">
                   {t('coach.plans.clearCell', 'Clear')}
                 </Text>
               </TouchableOpacity>

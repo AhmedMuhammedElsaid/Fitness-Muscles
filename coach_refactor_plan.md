@@ -1,5 +1,10 @@
 # Coach Flow UI/UX Overhaul
 
+> **STATUS: ✅ COMPLETE** — all phases A–G done on branch `feat/coach-ui-overhaul`.
+> Phase A (foundation), B (5-tab nav + Programs hub), C (home dashboard), D (clients),
+> E (programs sub-views polish), F (tips + profile), G (RTL/i18n audit + final gates).
+> Coach flow now mirrors the client flow's design-system quality. No schema/RLS changes; zero new deps.
+
 ## Context
 
 The coach side of Fitness & Muscles feels confusing, flat, and unprofessional. Root causes, confirmed in code:
