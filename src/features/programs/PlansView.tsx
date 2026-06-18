@@ -231,22 +231,12 @@ export function PlansView() {
       if (cellModalState.existing) {
         await clearPlanDay(cellModalState.existing.id);
       }
-      if (workoutId !== null) {
-        await setPlanDay({
-          planId: gridPlan.id,
-          weekNumber: cellModalState.weekNumber,
-          dayOfWeek: cellModalState.dayOfWeek,
-          workoutId,
-        });
-      } else if (workoutId === null && !cellModalState.existing) {
-        // Set as rest day explicitly
-        await setPlanDay({
-          planId: gridPlan.id,
-          weekNumber: cellModalState.weekNumber,
-          dayOfWeek: cellModalState.dayOfWeek,
-          workoutId: null,
-        });
-      }
+      await setPlanDay({
+        planId: gridPlan.id,
+        weekNumber: cellModalState.weekNumber,
+        dayOfWeek: cellModalState.dayOfWeek,
+        workoutId,
+      });
       setCellModalState(null);
     } finally {
       setSaving(false);
@@ -275,14 +265,14 @@ export function PlansView() {
                   startDate,
                   replaceAssignmentId: existing.id,
                 });
-                setAssignPlanTarget(null);
+                closeAssign();
               },
             },
           ],
         );
       } else {
         await assignPlan({ planId: assignPlanTarget.id, clientId, startDate });
-        setAssignPlanTarget(null);
+        closeAssign();
       }
     } finally {
       setSaving(false);
@@ -293,6 +283,11 @@ export function PlansView() {
   const [assignStartDate, setAssignStartDate] = useState(() =>
     new Date().toISOString().slice(0, 10),
   );
+
+  const closeAssign = () => {
+    setAssignPlanTarget(null);
+    setAssignClientId('');
+  };
 
   // Refresh gridPlan reference from live data when returning to grid view
   const liveGridPlan = gridPlan
@@ -525,7 +520,7 @@ export function PlansView() {
         visible={assignPlanTarget !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setAssignPlanTarget(null)}
+        onRequestClose={() => closeAssign()}
       >
         <View className="flex-1 bg-black/60 justify-end">
           <SafeAreaView className="bg-surface rounded-t-2xl" edges={['bottom']}>
@@ -595,7 +590,7 @@ export function PlansView() {
                   />
                   <SecondaryButton
                     title={t('common.cancel', 'Cancel')}
-                    onPress={() => setAssignPlanTarget(null)}
+                    onPress={() => closeAssign()}
                   />
                 </View>
               </View>

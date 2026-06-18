@@ -171,14 +171,19 @@ export function LibraryView() {
 
   const allMatches: Exercise[] = (allExercises ?? []) as Exercise[];
 
+  // Filter chip options come from the FULL library (not the search-filtered set),
+  // so chips never vanish mid-search and orphan an active filter selection.
+  const { data: fullLibrary } = useLiveQuery(exercisesCollection);
+  const fullList: Exercise[] = (fullLibrary ?? []) as Exercise[];
+
   const [muscleFilters, setMuscleFilters] = useState<string[]>([]);
   const [equipmentFilters, setEquipmentFilters] = useState<string[]>([]);
 
   const muscleOptions = Array.from(
-    new Set(allMatches.map((e) => e.muscle_group).filter((g): g is string => !!g)),
+    new Set(fullList.map((e) => e.muscle_group).filter((g): g is string => !!g)),
   ).sort();
   const equipmentOptions = Array.from(
-    new Set(allMatches.map((e) => e.equipment).filter((g): g is string => !!g)),
+    new Set(fullList.map((e) => e.equipment).filter((g): g is string => !!g)),
   ).sort();
 
   const exercises = allMatches.filter(
