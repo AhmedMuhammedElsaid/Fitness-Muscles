@@ -33,12 +33,14 @@
     },
     "home": {
       "welcome": "مرحباً بعودتك",
-      "clients": "العملاء النشطون",
-      "plans": "الخطط",
+      "statsTitle": "نظرة عامة",
+      "activeClients": "عملاء نشطون",
+      "activePlans": "خطط نشطة",
+      "weekCompletions": "هذا الأسبوع",
+      "weeklyTrend": "الإنجازات الأسبوعية",
       "recentActivity": "النشاط الأخير",
-      "noActivity": "لم يتم تسجيل أي تمارين بعد",
-      "workoutLogged": "تم تسجيل التمرين",
-      "effort": "الجهد"
+      "noActivity": "لم يتم تسجيل تمارين بعد",
+      "effortLabel": "جهد {{value}}"
     },
     "clients": {
       "title": "العملاء",

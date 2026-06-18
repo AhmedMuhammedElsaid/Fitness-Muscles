@@ -33,12 +33,14 @@
     },
     "home": {
       "welcome": "Welcome back",
-      "clients": "Active Clients",
-      "plans": "Plans",
+      "statsTitle": "Coach Overview",
+      "activeClients": "Active Clients",
+      "activePlans": "Active Plans",
+      "weekCompletions": "This Week",
+      "weeklyTrend": "Weekly Completions",
       "recentActivity": "Recent Activity",
       "noActivity": "No workouts logged yet",
-      "workoutLogged": "Workout logged",
-      "effort": "Effort"
+      "effortLabel": "Effort {{value}}"
     },
     "clients": {
       "title": "Clients",
