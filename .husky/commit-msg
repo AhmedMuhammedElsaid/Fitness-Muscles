@@ -1,6 +1,4 @@
-# `npx` shim breaks on the `&` in the project path (see APP_CONTEXT §13),
-# so invoke commitlint through node directly.
-
+# Invoke commitlint through node directly (see APP_CONTEXT §2/§13).
 # Git hooks inherit the system node (v12 here), too old for modern commitlint.
 # Prefer the newest nvm-managed node if the active one is older than v18.
 if [ "$(node -e 'process.stdout.write(String(process.versions.node.split(".")[0]))' 2>/dev/null || echo 0)" -lt 18 ]; then
