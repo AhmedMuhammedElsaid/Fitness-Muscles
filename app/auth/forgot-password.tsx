@@ -2,6 +2,7 @@ import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { supabase } from '@/config/supabase';
 import { firstError } from '@/lib/formError';
@@ -12,6 +13,7 @@ const schema = z.object({
 });
 
 export default function ForgotPasswordScreen() {
+  const { t } = useTranslation();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +31,11 @@ export default function ForgotPasswordScreen() {
   if (sent) {
     return (
       <View className="flex-1 bg-background items-center justify-center px-7">
-        <Text className="text-primary font-serif text-2xl italic mb-4">Check your email</Text>
+        <Text className="text-primary font-serif text-2xl italic mb-4">{t('auth.checkEmailTitle')}</Text>
         <Text className="text-text-secondary text-center text-sm mb-8">
-          We sent a password reset link to your email address.
+          {t('auth.checkEmailSubtitle')}
         </Text>
-        <PrimaryButton title="Back to Login" onPress={() => router.replace('/auth/login')} />
+        <PrimaryButton title={t('auth.backToLogin')} onPress={() => router.replace('/auth/login')} />
       </View>
     );
   }
@@ -43,14 +45,14 @@ export default function ForgotPasswordScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       className="flex-1 bg-background items-center justify-center px-7"
     >
-      <Text className="text-primary font-serif text-2xl italic mb-2">Forgot Password</Text>
+      <Text className="text-primary font-serif text-2xl italic mb-2">{t('auth.forgotTitle')}</Text>
       <Text className="text-text-secondary text-center text-sm mb-8">
-        Enter your email and we'll send you a reset link.
+        {t('auth.forgotSubtitle')}
       </Text>
       <form.Field name="email">
         {(field) => (
           <TextInput
-            placeholder="your@email.com"
+            placeholder={t('auth.emailPlaceholder')}
             keyboardType="email-address"
             autoCapitalize="none"
             value={field.state.value}
@@ -61,7 +63,7 @@ export default function ForgotPasswordScreen() {
         )}
       </form.Field>
       <View className="mt-6 w-full">
-        <PrimaryButton title="Send Reset Link" loading={loading} onPress={() => form.handleSubmit()} />
+        <PrimaryButton title={t('auth.sendResetLink')} loading={loading} onPress={() => form.handleSubmit()} />
       </View>
     </KeyboardAvoidingView>
   );

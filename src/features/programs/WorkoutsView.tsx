@@ -383,6 +383,11 @@ export function WorkoutsView() {
                                       </TouchableOpacity>
                                     ))}
                                   </ScrollView>
+                                  {firstError(f.state.meta.errors) ? (
+                                    <Text className="text-red-500 text-xs font-sans mt-1">
+                                      {firstError(f.state.meta.errors)}
+                                    </Text>
+                                  ) : null}
                                 </View>
                               )}
                             </form.Field>

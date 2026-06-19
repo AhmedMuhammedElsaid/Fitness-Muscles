@@ -3,6 +3,7 @@ import { Link } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { supabase } from '@/config/supabase';
 import { firstError } from '@/lib/formError';
@@ -13,6 +14,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +52,7 @@ export default function LoginScreen() {
             Fitness &amp; Muscles
           </Text>
           <Text className="text-text-secondary text-center text-sm mb-10">
-            Your fitness journey starts here
+            {t('auth.tagline')}
           </Text>
 
           {error && (
@@ -63,8 +65,8 @@ export default function LoginScreen() {
             <form.Field name="email">
               {(field) => (
                 <TextInput
-                  label="Email"
-                  placeholder="your@email.com"
+                  label={t('auth.email')}
+                  placeholder={t('auth.emailPlaceholder')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={field.state.value}
@@ -77,9 +79,9 @@ export default function LoginScreen() {
             <form.Field name="password">
               {(field) => (
                 <TextInput
-                  label="Password"
-                  placeholder="Enter your password"
-                  secureTextEntry
+                  label={t('auth.password')}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  passwordToggle
                   value={field.state.value}
                   onChangeText={field.handleChange}
                   onBlur={field.handleBlur}
@@ -91,16 +93,16 @@ export default function LoginScreen() {
 
           <Link href="/auth/forgot-password" asChild>
             <Text className="text-primary text-sm text-right mb-6">
-              Forgot password?
+              {t('auth.forgotPassword')}
             </Text>
           </Link>
 
-          <PrimaryButton title="Sign In" loading={loading} onPress={() => form.handleSubmit()} />
+          <PrimaryButton title={t('auth.signIn')} loading={loading} onPress={() => form.handleSubmit()} />
 
           <View className="flex-row justify-center mt-6">
-            <Text className="text-text-secondary text-sm">Don't have an account? </Text>
+            <Text className="text-text-secondary text-sm">{t('auth.noAccount')}</Text>
             <Link href="/auth/signup">
-              <Text className="text-primary text-sm font-semibold">Sign Up</Text>
+              <Text className="text-primary text-sm font-semibold">{t('auth.signUp')}</Text>
             </Link>
           </View>
         </View>

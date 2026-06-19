@@ -1,9 +1,11 @@
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui';
 
 export default function CoachTabLayout() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -12,8 +14,9 @@ export default function CoachTabLayout() {
         tabBarStyle: {
           backgroundColor: '#1A1A1A',
           borderTopColor: '#3A3A3A',
-          height: 76,
-          paddingBottom: 16,
+          height: 60 + insets.bottom,
+          paddingBottom: insets.bottom + 8,
+          paddingTop: 8,
         },
         tabBarActiveTintColor: '#E8DEB5',
         tabBarInactiveTintColor: '#666666',

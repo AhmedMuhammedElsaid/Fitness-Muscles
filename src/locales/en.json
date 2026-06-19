@@ -19,6 +19,29 @@
   "mutation": {
     "failed": "Something went wrong. Please try again."
   },
+  "auth": {
+    "tagline": "Your fitness journey starts here",
+    "signupTagline": "Create your account",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signupPasswordPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "createAccount": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account? ",
+    "haveAccount": "Already have an account? ",
+    "forgotTitle": "Forgot Password",
+    "forgotSubtitle": "Enter your email and we'll send you a reset link.",
+    "sendResetLink": "Send Reset Link",
+    "backToLogin": "Back to Login",
+    "checkEmailTitle": "Check your email",
+    "checkEmailSubtitle": "We sent a password reset link to your email address."
+  },
   "coach": {
     "tabs": {
       "home": "Home",
