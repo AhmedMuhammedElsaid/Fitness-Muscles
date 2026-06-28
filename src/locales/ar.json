@@ -19,6 +19,29 @@
   "mutation": {
     "failed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   },
+  "auth": {
+    "tagline": "رحلة لياقتك تبدأ هنا",
+    "signupTagline": "أنشئ حسابك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "your@email.com",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "signupPasswordPlaceholder": "٨ أحرف على الأقل",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "createAccount": "إنشاء حساب",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟ ",
+    "haveAccount": "لديك حساب بالفعل؟ ",
+    "forgotTitle": "نسيت كلمة المرور",
+    "forgotSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "checkEmailTitle": "تحقق من بريدك الإلكتروني",
+    "checkEmailSubtitle": "أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."
+  },
   "coach": {
     "tabs": {
       "home": "الرئيسية",

@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { useLiveQuery } from '@tanstack/react-db';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
-import WebView from 'react-native-webview';
 import { exercisesCollection } from '@/db/collections';
 import { createExercise, updateExercise, deleteExercise } from '@/db/mutations';
 import { Image } from 'expo-image';
@@ -31,20 +30,21 @@ import {
 } from '@/components/ui';
 import { firstError } from '@/lib/formError';
 import { useDebouncedValue } from '@/lib/pacer';
-import { extractVideoId, toEmbedUrl, toThumbnailUrl } from '@/lib/youtube';
+import { extractVideoId, toThumbnailUrl } from '@/lib/youtube';
+import { YouTubePlayer } from '@/components/YouTubePlayer';
 import type { Tables } from '@/types/db';
 import { ilike } from '@tanstack/db';
 
 type Exercise = Tables<'exercises'>;
 
-const YOUTUBE_REGEX = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/i;
-
+// Validate against the same parser used to store the video, so any link the app
+// can actually play (youtu.be, m.youtube.com, shorts, share links) is accepted.
 const exerciseSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string(),
   videoUrl: z.string().refine(
-    (v) => !v || YOUTUBE_REGEX.test(v),
-    'Must be a YouTube URL',
+    (v) => !v || extractVideoId(v) !== null,
+    'Must be a valid YouTube URL',
   ),
   muscleGroup: z.string(),
   equipment: z.string(),
@@ -423,13 +423,7 @@ export function LibraryView() {
           </View>
           {videoId ? (
             <View className="w-full aspect-video">
-              <WebView
-                source={{ uri: toEmbedUrl(videoId) }}
-                allowsFullscreenVideo
-                mediaPlaybackRequiresUserAction={false}
-                javaScriptEnabled
-                className="flex-1"
-              />
+              <YouTubePlayer videoId={videoId} />
             </View>
           ) : (
             <View className="flex-1 items-center justify-center">

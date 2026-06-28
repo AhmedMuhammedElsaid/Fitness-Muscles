@@ -25,7 +25,7 @@ import {
   StreakBadge,
 } from '@/components/ui';
 import { useSessionStore } from '@/stores/sessionStore';
-import { useWorkoutStore } from './workout/_store';
+import { useWorkoutStore } from '@/stores/workoutSessionStore';
 import { getTodaysPlanDay, isTodayInPlanRange, currentWeekNumber } from '@/lib/planDay';
 import {
   currentStreak,

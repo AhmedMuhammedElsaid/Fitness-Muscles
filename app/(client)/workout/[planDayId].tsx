@@ -11,7 +11,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { WebView } from 'react-native-webview';
 import * as Haptics from 'expo-haptics';
 import { useLiveQuery } from '@tanstack/react-db';
 import {
@@ -24,14 +23,15 @@ import { logProgress } from '@/db/mutations';
 import { Icon, ProgressRing } from '@/components/ui';
 import { colors } from '@/theme/tokens';
 import { useSessionStore } from '@/stores/sessionStore';
-import { extractVideoId, toEmbedUrl } from '@/lib/youtube';
+import { extractVideoId } from '@/lib/youtube';
+import { YouTubePlayer } from '@/components/YouTubePlayer';
 import {
   addSet,
   clearWorkout,
   startWorkout,
   upsertSet,
   useWorkoutStore,
-} from './_store';
+} from '@/stores/workoutSessionStore';
 import type { Tables } from '@/types/db';
 
 type WorkoutExercise = Tables<'workout_exercises'>;
@@ -196,12 +196,7 @@ function ExerciseCard({
               <Text className="text-primary font-sans text-sm">{t('client.workout.hideVideo')}</Text>
             </TouchableOpacity>
             <View className="rounded-card overflow-hidden" style={{ height: 180 }}>
-              <WebView
-                source={{ uri: toEmbedUrl(videoId) }}
-                allowsFullscreenVideo
-                mediaPlaybackRequiresUserAction={false}
-                style={{ flex: 1 }}
-              />
+              <YouTubePlayer videoId={videoId} />
             </View>
           </View>
         ) : (

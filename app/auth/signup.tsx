@@ -3,6 +3,7 @@ import { Link } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import { z } from 'zod';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PrimaryButton, TextInput } from '@/components/ui';
 import { supabase } from '@/config/supabase';
 import { firstError } from '@/lib/formError';
@@ -19,6 +20,7 @@ const signupSchema = z
   });
 
 export default function SignupScreen() {
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +58,7 @@ export default function SignupScreen() {
             Fitness &amp; Muscles
           </Text>
           <Text className="text-text-secondary text-center text-sm mb-10">
-            Create your account
+            {t('auth.signupTagline')}
           </Text>
 
           {error && (
@@ -69,8 +71,8 @@ export default function SignupScreen() {
             <form.Field name="email">
               {(field) => (
                 <TextInput
-                  label="Email"
-                  placeholder="your@email.com"
+                  label={t('auth.email')}
+                  placeholder={t('auth.emailPlaceholder')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={field.state.value}
@@ -83,9 +85,9 @@ export default function SignupScreen() {
             <form.Field name="password">
               {(field) => (
                 <TextInput
-                  label="Password"
-                  placeholder="At least 8 characters"
-                  secureTextEntry
+                  label={t('auth.password')}
+                  placeholder={t('auth.signupPasswordPlaceholder')}
+                  passwordToggle
                   value={field.state.value}
                   onChangeText={field.handleChange}
                   onBlur={field.handleBlur}
@@ -96,9 +98,9 @@ export default function SignupScreen() {
             <form.Field name="confirmPassword">
               {(field) => (
                 <TextInput
-                  label="Confirm Password"
-                  placeholder="Re-enter your password"
-                  secureTextEntry
+                  label={t('auth.confirmPassword')}
+                  placeholder={t('auth.confirmPasswordPlaceholder')}
+                  passwordToggle
                   value={field.state.value}
                   onChangeText={field.handleChange}
                   onBlur={field.handleBlur}
@@ -108,12 +110,12 @@ export default function SignupScreen() {
             </form.Field>
           </View>
 
-          <PrimaryButton title="Create Account" loading={loading} onPress={() => form.handleSubmit()} />
+          <PrimaryButton title={t('auth.createAccount')} loading={loading} onPress={() => form.handleSubmit()} />
 
           <View className="flex-row justify-center mt-6">
-            <Text className="text-text-secondary text-sm">Already have an account? </Text>
+            <Text className="text-text-secondary text-sm">{t('auth.haveAccount')}</Text>
             <Link href="/auth/login">
-              <Text className="text-primary text-sm font-semibold">Sign In</Text>
+              <Text className="text-primary text-sm font-semibold">{t('auth.signIn')}</Text>
             </Link>
           </View>
         </View>
