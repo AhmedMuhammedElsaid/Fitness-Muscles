@@ -4,13 +4,14 @@ React Native (Expo SDK 55, RN 0.83, React 19) mobile app. **Single-tenant**: one
 
 ## Where to look first
 
-- **`APP_CONTEXT.md`** — living architectural snapshot. Starts as a skeleton in Phase 0; sections fill at each phase's 🛑 STOP marker. **Read this before exploring the codebase** — even when sections are still empty, the section headers tell you which phase owns what.
-- **`plan.md`** — the full build spec. Only open for phase-level questions or when `APP_CONTEXT.md` is insufficient.
+- **`APP_CONTEXT.md`** — living architectural snapshot and the primary spec. **Read this before exploring the codebase** — the section headers tell you which phase owns what.
 - Source-of-truth files (when answering "what exists?"): `package.json`, `supabase/migrations/0001_init.sql`, `src/types/db.ts`, `src/db/collections.ts`.
+
+> **Note:** `plan.md` (the original build spec) was retired after the MVP shipped. All architectural state now lives in `APP_CONTEXT.md`; historical phase context is in git history.
 
 ## MVP scope
 
-**In:** exercise library (with YouTube-hosted instructional video), reusable workouts, multi-week plan builder, plan assignment to clients, daily tips feed, client workout execution + progress logging, invite-code onboarding (8 steps), English + Arabic with RTL.
+**In:** exercise library (with YouTube-hosted instructional video), reusable workouts, multi-week plan builder, plan assignment to clients, daily tips feed, client workout execution + progress logging, invite-code onboarding (8 steps), Arabic (default, RTL) + English.
 
 **Out (v1):** meal plans, real-time chat, multi-tenant / multi-coach, social features, wearables integration.
 
@@ -45,7 +46,7 @@ React Native (Expo SDK 55, RN 0.83, React 19) mobile app. **Single-tenant**: one
 - **New Architecture only.** Refuse any dep without New Arch support. Verify on [reactnative.directory](https://reactnative.directory) before `npm install`.
 - **TanStack-first.** Never add Zustand, react-hook-form, or `@hookform/resolvers`. If a need arises that doesn't fit the TanStack stack, raise it in `plan.md` first.
 - **`FlashList` for long lists.** `FlatList` is banned anywhere >50 rows is realistic (exercises, plans, tips, history).
-- **i18n everywhere.** Every user-facing string goes through `t('key')`. Keys exist in both `src/locales/en.json` and `src/locales/ar.json`. RTL handled via `I18nManager.forceRTL` in `app/_layout.tsx` before first render.
+- **i18n everywhere.** Every user-facing string goes through `t('key')`. Keys exist in both `src/locales/en.json` and `src/locales/ar.json`. **Arabic is the default language** (`lng: 'ar'`, `fallbackLng: 'en'` in `src/lib/i18n.ts`). RTL handled via `I18nManager.forceRTL` in `app/_layout.tsx` before first render.
 - **RLS is the security boundary.** Client-side filtering on `coach_id`/`client_id` is defense-in-depth, not security. If a query "needs" the service-role key, fix the RLS policy instead.
 - **Optimistic mutations.** All TanStack DB mutations are optimistic; wrap in try/catch; on rollback, surface a `burnt` toast with an i18n key (`mutation.failed.*`).
 
@@ -70,7 +71,7 @@ React Native (Expo SDK 55, RN 0.83, React 19) mobile app. **Single-tenant**: one
 | Android minSdk | 24 |
 | Primary color | `#E8DEB5` (cream/gold) |
 | Splash background | `#1A1A1A` |
-| Languages | English (default) + Arabic (RTL) |
+| Languages | Arabic (default, RTL) + English |
 
 ## Environment variables
 
@@ -133,4 +134,4 @@ Tick boxes as phases complete. Format: ☐ not started · 🟡 in progress · �
 
 **Post-MVP overhauls (done):**
 - ✅ Client-UX revamp (2026-06-13) — Ionicons nav, Home dashboard with charts/stats, animated primitives, `progressStats` lib.
-- ✅ Coach-UI overhaul (2026-06-18, branch `feat/coach-ui-overhaul`, not yet merged) — 5-tab nav, Programs hub, coach dashboard, avatar'd/named clients, `coachStats` lib, 4 new primitives (`Avatar`/`Badge`/`SegmentedControl`/`IconButton`), `danger` token, `profilesCollection`. Full details in `APP_CONTEXT.md` §3/§4/§6/§13. The `coach_refactor*.md` plan docs were deleted after completion (work captured in APP_CONTEXT + git history).
+- ✅ Coach-UI overhaul (2026-06-18, merged to `main` via PR #1, commit `d74f7cb`) — 5-tab nav, Programs hub, coach dashboard, avatar'd/named clients, `coachStats` lib, 4 new primitives (`Avatar`/`Badge`/`SegmentedControl`/`IconButton`), `danger` token, `profilesCollection`. Full details in `APP_CONTEXT.md` §3/§4/§6/§13. The `coach_refactor*.md` plan docs were deleted after completion (work captured in APP_CONTEXT + git history).
