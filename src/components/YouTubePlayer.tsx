@@ -1,11 +1,14 @@
 import { WebView } from 'react-native-webview';
 
 /**
- * Renders a YouTube video inside an <iframe> served from an HTML document with
- * `baseUrl: https://www.youtube.com`. Loading the embed URL directly via
- * `source={{ uri }}` makes the WebView a top-level navigation with no valid
- * embedding origin, which Android's player rejects ("error 153 / configuration").
- * The iframe + matching baseUrl gives the player a legitimate origin.
+ * Renders a YouTube video inside an <iframe> served from an HTML document.
+ *
+ * The `baseUrl` must be a normal origin, NOT `https://www.youtube.com`: using
+ * youtube.com as the document origin makes the embed look like a request from
+ * YouTube to itself, which its anti-abuse layer rejects with player error 152
+ * ("not available in embedded players"). A neutral https origin lets the iframe
+ * embed play. Verified on-device (Android 14): plain iframe + https://localhost
+ * plays; youtube.com baseUrl throws 152.
  */
 export function YouTubePlayer({ videoId }: { videoId: string }) {
   const html = `<!DOCTYPE html>
@@ -32,7 +35,7 @@ export function YouTubePlayer({ videoId }: { videoId: string }) {
 
   return (
     <WebView
-      source={{ html, baseUrl: 'https://www.youtube.com' }}
+      source={{ html, baseUrl: 'https://localhost' }}
       style={{ flex: 1, backgroundColor: '#000' }}
       originWhitelist={['*']}
       javaScriptEnabled
