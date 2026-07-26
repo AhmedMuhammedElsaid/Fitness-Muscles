@@ -48,10 +48,10 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "aa9ab236-a124-4566-9848-4e0144554018"
+        "projectId": "d060dc12-d544-4b41-8f51-af4dec980f53"
       }
     },
-    "owner": "volunteering-apps",
+    "owner": "ahmedmuhammedelsaid",
     "runtimeVersion": {
       "policy": "appVersion"
     },
