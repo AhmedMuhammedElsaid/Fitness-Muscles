@@ -1,4 +1,5 @@
 import 'react-native-reanimated';
+import 'react-native-url-polyfill/auto';
 import '../src/global.css';
 import { useEffect } from 'react';
 import { I18nManager } from 'react-native';
