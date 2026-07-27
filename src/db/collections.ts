@@ -14,9 +14,10 @@ interface DefineOptions {
 /**
  * Builds a TanStack DB collection backed by a Supabase table.
  *
- * `queryFn` re-reads the session at call time (NOT at module init) so a token
- * refresh propagates to subsequent fetches; the `sessionStore` listener invalidates
- * these queries on `TOKEN_REFRESHED`/`SIGNED_OUT`.
+ * Auth is handled per-request by the Supabase client itself (attaches the
+ * current session token, RLS scopes the rows) - the `sessionStore` listener
+ * invalidates these queries on `TOKEN_REFRESHED`/`SIGNED_OUT` so a refresh or
+ * logout propagates to subsequent fetches.
  */
 function defineCollection<TName extends TableName>(
   table: TName,
@@ -35,8 +36,6 @@ function defineCollection<TName extends TableName>(
       queryClient,
       getKey,
       queryFn: async () => {
-        const { data: sessionData } = await supabase.auth.getSession();
-        if (!sessionData.session) return [];
         const { data, error } = await supabase.from(table).select('*');
         if (error) throw error;
         return (data ?? []) as Row[];
